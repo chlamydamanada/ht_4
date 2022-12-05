@@ -35,9 +35,10 @@ postsRouter.delete(
     let isPost = await postsQwRepository.findPost(req.params.id);
     if (!isPost) {
       res.sendStatus(404);
+    } else {
+      let isDel = await postsService.deletePost(req.params.id);
+      res.sendStatus(204);
     }
-    let isDel = await postsService.deletePost(req.params.id);
-    res.sendStatus(204);
   }
 );
 postsRouter.post(

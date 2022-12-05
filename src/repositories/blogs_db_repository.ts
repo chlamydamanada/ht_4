@@ -21,7 +21,7 @@ export const blogsRepository = {
     }));
   },*/
   async findBlog(id: string): Promise<BlogViewType | null> {
-    let blog = await blogsCollection.findOne({ id: id });
+    let blog = await blogsCollection.findOne({ _id: new ObjectId(id) });
     if (!blog) {
       return null;
     }

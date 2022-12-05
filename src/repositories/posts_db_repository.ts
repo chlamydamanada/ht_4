@@ -1,8 +1,9 @@
 import { postsCollection } from "./db";
+import { ObjectId } from "mongodb";
 
 export const postsRepository = {
   async deletePost(id: string) {
-    let isDel = await postsCollection.deleteOne({ id: id });
+    let isDel = await postsCollection.deleteOne({ _id: new ObjectId(id) });
     return isDel.deletedCount === 1;
   },
   async createPost(post: any) {
@@ -25,7 +26,7 @@ export const postsRepository = {
     blogId: string
   ) {
     const newPost = await postsCollection.updateOne(
-      { id: id },
+      { _id: new ObjectId(id) },
       {
         $set: {
           title: title,

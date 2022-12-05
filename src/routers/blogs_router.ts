@@ -15,16 +15,39 @@ import { inputValMiddleware } from "../middlewares/inputValue.middleware";
 
 export const blogsRouter = Router();
 
-blogsRouter.get("/", async (req: Request, res: Response) => {
-  const blogs = await blogsQwRepository.findBlogs(
-    req.query.searchNameTerm,
-    req.query.pageNumber,
-    req.query.pageSize,
-    req.query.sortBy,
-    req.query.sortDirection
-  );
-  res.status(200).send(blogs);
-});
+blogsRouter.get(
+  "/",
+  async (
+    req: Request<
+      {},
+      {},
+      {},
+      {
+        searchNameTerm: string | undefined;
+        pageNumber: string | undefined;
+        pageSize: string | undefined;
+        sortBy: string | undefined;
+        sortDirection: string | undefined;
+      }
+    >,
+    res: Response
+  ) => {
+    const { sortBy, pageNumber, pageSize, searchNameTerm, sortDirection } =
+      req.query;
+    let sortField = sortBy ? sortBy : "createdAt";
+    let pN = pageNumber ? +pageNumber : 1;
+    let pS = pageSize ? +pageSize : 10;
+    let sD: 1 | -1 = sortDirection === "asc" ? 1 : -1;
+    const blogs = await blogsQwRepository.findBlogs(
+      searchNameTerm,
+      pN,
+      pS,
+      sortField,
+      sD
+    );
+    res.status(200).send(blogs);
+  }
+);
 blogsRouter.get("/:id", async (req: Request<{ id: string }>, res: Response) => {
   let blog = await blogsQwRepository.findBlog(req.params.id);
   if (!blog) {

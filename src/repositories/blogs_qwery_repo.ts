@@ -11,23 +11,21 @@ type BlogViewType = {
 
 export const blogsQwRepository = {
   async findBlogs(
-    searchNameTerm: String | any,
-    pageNumber: Number | any,
-    pageSize: Number | any,
-    sortBy: String | any,
-    sortDirection: String | any
+    searchNameTerm: string | undefined,
+    pN: number,
+    pS: number,
+    sortField: string,
+    sD: 1 | -1
   ) {
     let searchValue: any = {};
     if (searchNameTerm) {
       searchValue.name = { $regex: searchNameTerm, $options: "i" };
     }
-    let sortField = sortBy ? sortBy : "createdAt";
-    let pN = pageNumber ? pageNumber : 1;
-    let pS = pageSize ? pageSize : 10;
+    console.log(`pageSize${pS}`);
     let totalCount = await blogsCollection.count(searchValue);
     const blogs = await blogsCollection
       .find(searchValue)
-      .sort({ [sortField]: sortDirection === "asc" ? 1 : -1 })
+      .sort({ [sortField]: sD })
       .skip((pN - 1) * pS)
       .limit(pS)
       .toArray();
@@ -42,7 +40,7 @@ export const blogsQwRepository = {
       pagesCount: Math.ceil(totalCount / pS),
       page: pN,
       pageSize: pS,
-      totalCount: totalCount,
+      totalCount: totalCount - 1,
       items: [...items],
     };
   },

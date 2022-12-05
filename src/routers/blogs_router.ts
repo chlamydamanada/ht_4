@@ -66,7 +66,6 @@ blogsRouter.post(
 blogsRouter.post(
   "/:blogId/posts/",
   baseAuthMiddleware,
-  blogIdValidation,
   titleValidation,
   shortDesValidation,
   contentValidation,
@@ -112,7 +111,6 @@ blogsRouter.put(
 );
 blogsRouter.get(
   "/:blogId/posts",
-  blogIdValidation,
   async (req: Request<{ blogId: string }>, res: Response) => {
     const getBlog = await blogsQwRepository.findBlog(req.params.blogId);
     if (!getBlog) {

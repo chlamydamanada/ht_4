@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const mongoUrl: any = process.env.MONGO_URL;
+
 const client = new MongoClient(mongoUrl);
 
 export async function runDb() {
@@ -15,6 +16,9 @@ export async function runDb() {
     await client.close();
   }
 }
+const myDb = client.db(process.env.DBNAME);
+export const blogsCollection = myDb.collection<BlogDbType>("blogs");
+export const postsCollection = myDb.collection("posts");
 
 export type BlogDbType = {
   //_id: ObjectId,
@@ -23,7 +27,3 @@ export type BlogDbType = {
   name: string;
   createdAt: string;
 };
-
-const myDb = client.db(process.env.DBNAME);
-export const blogsCollection = myDb.collection<BlogDbType>("blogs");
-export const postsCollection = myDb.collection("posts");

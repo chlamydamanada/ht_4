@@ -1,10 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import {
-  body,
-  validationResult,
-  ValidationError,
-  query,
-} from "express-validator";
+import { body, validationResult, ValidationError } from "express-validator";
 
 import { blogsService } from "../domain/blogs_service";
 import {

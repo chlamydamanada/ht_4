@@ -21,7 +21,7 @@ export const blogsQwRepository = {
     if (searchNameTerm) {
       searchValue.name = { $regex: searchNameTerm, $options: "i" };
     }
-    console.log(`pageSize${pS}`);
+
     let totalCount = await blogsCollection.count(searchValue);
     const blogs = await blogsCollection
       .find(searchValue)
@@ -40,8 +40,8 @@ export const blogsQwRepository = {
       pagesCount: Math.ceil(totalCount / pS),
       page: pN,
       pageSize: pS,
-      totalCount: totalCount - 1,
-      items: [...items],
+      totalCount: totalCount,
+      items: items,
     };
   },
 

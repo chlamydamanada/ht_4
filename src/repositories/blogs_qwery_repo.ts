@@ -47,18 +47,19 @@ export const blogsQwRepository = {
     };
   },
 
-  async findBlog(id: string): Promise<BlogViewType | null> {
+  async findBlog(id: string): Promise<BlogViewType | undefined> {
     let blog = await blogsCollection.findOne({ _id: new ObjectId(id) });
     if (!blog) {
-      return null;
+      return undefined;
+    } else {
+      return {
+        id: blog._id.toString(),
+        name: blog.name,
+        description: blog.description,
+        websiteUrl: blog.websiteUrl,
+        createdAt: blog.createdAt,
+      };
     }
-    return {
-      id: blog._id.toString(),
-      name: blog.name,
-      description: blog.description,
-      websiteUrl: blog.websiteUrl,
-      createdAt: blog.createdAt,
-    };
   },
   async findPostsById(
     blogId: string,

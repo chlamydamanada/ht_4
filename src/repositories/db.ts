@@ -3,7 +3,6 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const mongoUrl: any = process.env.MONGO_URL;
-
 const client = new MongoClient(mongoUrl);
 
 export async function runDb() {

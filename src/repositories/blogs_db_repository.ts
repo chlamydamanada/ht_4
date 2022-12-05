@@ -19,7 +19,7 @@ export const blogsRepository = {
       websiteUrl: b.websiteUrl,
       createdAt: b.createdAt,
     }));
-  },
+  },*/
   async findBlog(id: string): Promise<BlogViewType | null> {
     let blog = await blogsCollection.findOne({ id: id });
     if (!blog) {
@@ -32,7 +32,7 @@ export const blogsRepository = {
       websiteUrl: blog.websiteUrl,
       createdAt: blog.createdAt,
     };
-  },*/
+  },
   async deleteBlog(id: string) {
     const isDel = await blogsCollection.deleteOne({ _id: new ObjectId(id) });
     return isDel.deletedCount === 1;

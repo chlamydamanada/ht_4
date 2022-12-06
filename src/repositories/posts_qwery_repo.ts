@@ -2,19 +2,11 @@ import { postsCollection } from "./db";
 import { ObjectId } from "mongodb";
 
 export const postsQwRepository = {
-  async findPosts(
-    pageNumber: Number | any,
-    pageSize: Number | any,
-    sortBy: String | any,
-    sortDirection: String | any
-  ) {
-    let sortField = sortBy ? sortBy : "createdAt";
-    let pN = pageNumber ? pageNumber : 1;
-    let pS = pageSize ? pageSize : 10;
+  async findPosts(pN: number, pS: number, sortField: string, sD: 1 | -1) {
     let totalCount = await postsCollection.count({});
     const posts = await postsCollection
       .find({})
-      .sort({ [sortField]: sortDirection === "asc" ? 1 : -1 })
+      .sort({ [sortField]: sD })
       .skip((pN - 1) * pS)
       .limit(pS)
       .toArray();
@@ -32,7 +24,7 @@ export const postsQwRepository = {
       page: pN,
       pageSize: pS,
       totalCount: totalCount,
-      items: [...items],
+      items: items,
     };
   },
   async findPost(id: string) {

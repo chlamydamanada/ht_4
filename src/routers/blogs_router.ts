@@ -12,6 +12,7 @@ import { nameValidation } from "../middlewares/name.middleware";
 import { descriptionValidation } from "../middlewares/description.middleware";
 import { websiteValidation } from "../middlewares/website.middleware";
 import { inputValMiddleware } from "../middlewares/inputValue.middleware";
+import { postsQwRepository } from "../repositories/posts_qwery_repo";
 
 export const blogsRouter = Router();
 
@@ -136,15 +137,18 @@ blogsRouter.get(
   "/:blogId/posts",
   async (req: Request<{ blogId: string }>, res: Response) => {
     const getBlog = await blogsQwRepository.findBlog(req.params.blogId);
-    if (!getBlog) {
-      res.sendStatus(404);
-    } else if (getBlog) {
+    if (getBlog) {
+      const { sortBy, pageNumber, pageSize, sortDirection } = req.query;
+      let sortField: string = sortBy ? sortBy : "createdAt";
+      let pN: number = pageNumber ? +pageNumber : 1;
+      let pS: number = pageSize ? +pageSize : 10;
+      let sD: 1 | -1 = sortDirection === "asc" ? 1 : -1;
       let postsByBlogId = await blogsQwRepository.findPostsById(
         req.params.blogId,
-        req.query.pageNumber,
-        req.query.pageSize,
-        req.query.sortBy,
-        req.query.sortDirection
+        pN,
+        pS,
+        sortField,
+        sD
       );
       res.status(200).send(postsByBlogId);
     } else {

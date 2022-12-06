@@ -12,12 +12,12 @@ import { inputValMiddleware } from "../middlewares/inputValue.middleware";
 export const postsRouter = Router();
 
 postsRouter.get("/", async (req: Request, res: Response) => {
-  const posts = await postsQwRepository.findPosts(
-    req.query.pageNumber,
-    req.query.pageSize,
-    req.query.sortBy,
-    req.query.sortDirection
-  );
+  const { sortBy, pageNumber, pageSize, sortDirection } = req.query;
+  let sortField: string = sortBy ? sortBy : "createdAt";
+  let pN = pageNumber ? +pageNumber : 1;
+  let pS = pageSize ? +pageSize : 10;
+  let sD: 1 | -1 = sortDirection === "asc" ? 1 : -1;
+  const posts = await postsQwRepository.findPosts(pN, pS, sortField, sD);
   res.status(200).send(posts);
 });
 postsRouter.get("/:id", async (req: Request<{ id: string }>, res: Response) => {

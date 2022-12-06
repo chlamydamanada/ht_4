@@ -66,7 +66,7 @@ export const blogsQwRepository = {
     sortField: string,
     sD: 1 | -1
   ) {
-    let totalCount = await postsCollection.count({});
+    let totalCount = await postsCollection.count({ blogId: blogId });
     let posts = await postsCollection
       .find({ blogId: blogId })
       .sort({ [sortField]: sD })

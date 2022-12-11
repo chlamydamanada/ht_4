@@ -1,13 +1,7 @@
 import { blogsCollection } from "./db";
 import { ObjectId } from "mongodb";
-
-type BlogViewType = {
-  id: string;
-  websiteUrl: string;
-  description: string;
-  name: string;
-  createdAt: string;
-};
+import { blogViewType } from "../models/blogViewModel";
+import { blogCreateServiceType } from "../models/blogCreateModel";
 
 export const blogsRepository = {
   /*async findBlogs() {
@@ -20,24 +14,19 @@ export const blogsRepository = {
       createdAt: b.createdAt,
     }));
   },*/
-  async findBlog(id: string): Promise<BlogViewType | null> {
+  async findBlog(id: string): Promise<boolean> {
     let blog = await blogsCollection.findOne({ _id: new ObjectId(id) });
     if (!blog) {
-      return null;
+      return false;
+    } else {
+      return true;
     }
-    return {
-      id: blog._id.toString(),
-      name: blog.name,
-      description: blog.description,
-      websiteUrl: blog.websiteUrl,
-      createdAt: blog.createdAt,
-    };
   },
-  async deleteBlog(id: string) {
+  async deleteBlog(id: string): Promise<boolean> {
     const isDel = await blogsCollection.deleteOne({ _id: new ObjectId(id) });
     return isDel.deletedCount === 1;
   },
-  async createBlog(blog: any) {
+  async createBlog(blog: blogCreateServiceType): Promise<blogViewType> {
     const newBlog = await blogsCollection.insertOne(blog);
     return {
       id: newBlog.insertedId.toString(),
@@ -52,7 +41,7 @@ export const blogsRepository = {
     name: string,
     description: string,
     websiteUrl: string
-  ) {
+  ): Promise<boolean> {
     const newBlog = await blogsCollection.updateOne(
       { _id: new ObjectId(id) },
       {

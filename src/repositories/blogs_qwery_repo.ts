@@ -1,14 +1,10 @@
 import { blogsCollection, postsCollection } from "./db";
 import { ObjectId } from "mongodb";
+import { blogViewType } from "../models/blogViewModel";
 
-type BlogViewType = {
-  id: string;
-  websiteUrl: string;
-  description: string;
-  name: string;
-  createdAt: string;
+type searchVal = {
+  name?: {};
 };
-
 export const blogsQwRepository = {
   async findBlogs(
     searchNameTerm: string | undefined,
@@ -17,7 +13,7 @@ export const blogsQwRepository = {
     sortField: string,
     sD: 1 | -1
   ) {
-    let searchValue: any = {};
+    let searchValue: searchVal = {};
     if (searchNameTerm) {
       searchValue.name = { $regex: searchNameTerm, $options: "i" };
     }
@@ -30,7 +26,7 @@ export const blogsQwRepository = {
       .limit(pS)
       .toArray();
     const items = blogs.map((b) => ({
-      id: b._id,
+      id: b._id.toString(),
       name: b.name,
       description: b.description,
       websiteUrl: b.websiteUrl,
@@ -45,7 +41,7 @@ export const blogsQwRepository = {
     };
   },
 
-  async findBlog(id: string): Promise<BlogViewType | undefined> {
+  async findBlog(id: string): Promise<blogViewType | undefined> {
     let blog = await blogsCollection.findOne({ _id: new ObjectId(id) });
     if (!blog) {
       return undefined;

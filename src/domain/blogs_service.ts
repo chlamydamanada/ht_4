@@ -1,4 +1,8 @@
 import { blogsRepository } from "../repositories/blogs_db_repository";
+import {
+  blogCreateServiceType,
+  blogCreateType,
+} from "../models/blogCreateModel";
 
 type BlogViewType = {
   id: string;
@@ -11,10 +15,10 @@ type BlogViewType = {
 export const blogsService = {
   /*async findBlogs() {
     return await blogsRepository.findBlogs();
-  },
-  async findBlog(id: string): Promise<BlogViewType | null> {
-    return await blogsRepository.findBlog(id);
   },*/
+  async findBlog(id: string): Promise<boolean> {
+    return await blogsRepository.findBlog(id);
+  },
   async deleteBlog(id: string) {
     return await blogsRepository.deleteBlog(id);
   },
@@ -23,14 +27,13 @@ export const blogsService = {
     description: string,
     websiteUrl: string
   ): Promise<BlogViewType> {
-    const newBlog = {
+    const newBlog: blogCreateServiceType = {
       name: name,
       description: description,
       websiteUrl: websiteUrl,
       createdAt: new Date().toISOString(),
     };
-    const result = await blogsRepository.createBlog(newBlog);
-    return result;
+    return await blogsRepository.createBlog(newBlog);
   },
   async updateBlog(
     id: string,

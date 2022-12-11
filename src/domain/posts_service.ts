@@ -1,4 +1,6 @@
 import { postsRepository } from "../repositories/posts_db_repository";
+import { blogsRepository } from "../repositories/blogs_db_repository";
+import { postCreateServiceType } from "../models/postCreateModel";
 
 export const postsService = {
   async deletePost(id: string) {
@@ -11,7 +13,7 @@ export const postsService = {
     blogId: string,
     blogName: string
   ) {
-    const newPost = {
+    const newPost: postCreateServiceType = {
       title: title,
       shortDescription: shortDescription,
       content: content,
@@ -35,5 +37,8 @@ export const postsService = {
       content,
       blogId
     );
+  },
+  async findPost(id: string): Promise<boolean> {
+    return await postsRepository.findPost(id);
   },
 };

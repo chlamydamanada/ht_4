@@ -1,5 +1,7 @@
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient } from "mongodb";
 import * as dotenv from "dotenv";
+import { blogDbModel } from "../models/blogDbModel";
+import { postDbType } from "../models/postsDbModel";
 dotenv.config();
 
 const mongoUrl: any = process.env.MONGO_URL;
@@ -16,13 +18,6 @@ export async function runDb() {
   }
 }
 const myDb = client.db(process.env.DBNAME);
-export const blogsCollection = myDb.collection<BlogDbType>("blogs");
-export const postsCollection = myDb.collection("posts");
-
-export type BlogDbType = {
-  //_id: ObjectId,
-  websiteUrl: string;
-  description: string;
-  name: string;
-  createdAt: string;
-};
+export const blogsCollection = myDb.collection<blogDbModel>("blogs");
+export const postsCollection = myDb.collection<postDbType>("posts");
+export const usersCollection = myDb.collection("users");

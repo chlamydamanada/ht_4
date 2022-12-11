@@ -1,12 +1,14 @@
-import { postsCollection } from "./db";
+import { blogsCollection, postsCollection } from "./db";
 import { ObjectId } from "mongodb";
+import { postViewType } from "../models/postViewModel";
+import { postCreateServiceType } from "../models/postCreateModel";
 
 export const postsRepository = {
-  async deletePost(id: string) {
+  async deletePost(id: string): Promise<boolean> {
     let isDel = await postsCollection.deleteOne({ _id: new ObjectId(id) });
     return isDel.deletedCount === 1;
   },
-  async createPost(post: any) {
+  async createPost(post: postCreateServiceType): Promise<postViewType> {
     let result = await postsCollection.insertOne(post);
     return {
       id: result.insertedId.toString(),
@@ -24,7 +26,7 @@ export const postsRepository = {
     shortDescription: string,
     content: string,
     blogId: string
-  ) {
+  ): Promise<boolean> {
     const newPost = await postsCollection.updateOne(
       { _id: new ObjectId(id) },
       {
@@ -37,5 +39,13 @@ export const postsRepository = {
       }
     );
     return newPost.matchedCount === 1;
+  },
+  async findPost(id: string): Promise<boolean> {
+    let post = await postsCollection.findOne({ _id: new ObjectId(id) });
+    if (!post) {
+      return false;
+    } else {
+      return true;
+    }
   },
 };

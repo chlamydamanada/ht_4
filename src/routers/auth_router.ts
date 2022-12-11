@@ -19,10 +19,10 @@ authRouter.post(
       req.body.loginOrEmail,
       req.body.password
     );
-    if (!isTruth) {
-      res.sendStatus(401);
-    } else {
+    if (isTruth) {
       res.sendStatus(204);
+    } else {
+      res.sendStatus(401);
     }
   }
 );

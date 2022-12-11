@@ -6,6 +6,10 @@ export const authService = {
     const user = await usersDbRepository.findUserByLoginOrEmail(loginOrEmail);
     if (!user) return false;
     const userHash = await usersService.generateHash(password, user.salt);
-    return user.hash !== userHash;
+    if (user.hash === userHash) {
+      return true;
+    } else {
+      return false;
+    }
   },
 };

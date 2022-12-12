@@ -12,7 +12,7 @@ export const usersQwRepository = {
     let totalCount = await usersCollection.count(login, email);
 
     const allUsers = await usersCollection
-      .find(login, email)
+      .find({ $or: [login, email] })
       .sort({ [sortField.sortBy]: sortField.sortDirection })
       .skip((pages.pageNumber - 1) * pages.pageSize)
       .limit(pages.pageSize)

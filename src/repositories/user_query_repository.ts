@@ -11,8 +11,8 @@ export const usersQwRepository = {
     sortBy: string,
     sortDirection: 1 | -1
   ): Promise<any> {
-    const login = searchLoginTerm ? searchLoginTerm : " ";
-    const email = searchEmailTerm ? searchEmailTerm : " ";
+    const login = searchLoginTerm ? searchLoginTerm : "";
+    const email = searchEmailTerm ? searchEmailTerm : "";
 
     const totalCount = await usersCollection.count({
       $or: [

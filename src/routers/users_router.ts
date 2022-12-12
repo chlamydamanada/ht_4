@@ -56,12 +56,12 @@ usersRouter.post(
   emailValidation,
   inputValMiddleware,
   async (req: RequestWithBody<userCreateType>, res: Response<userViewType>) => {
-    const newUser: any = await usersService.createUser(
+    const userId = await usersService.createUser(
       req.body.login,
       req.body.password,
       req.body.email
     );
-
+    const newUser = await usersQwRepository.findUserById(userId);
     res.status(201).send(newUser);
   }
 );

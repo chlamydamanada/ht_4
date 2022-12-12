@@ -1,4 +1,4 @@
-import { blogsCollection, postsCollection } from "./db";
+import { blogsCollection, postsCollection, usersCollection } from "./db";
 
 export const allDataRepository = {
   async deleteAllPost() {
@@ -7,6 +7,10 @@ export const allDataRepository = {
   },
   async deleteAllBlogs() {
     let isDel = await blogsCollection.deleteMany({});
+    return isDel.deletedCount >= 0;
+  },
+  async deleteAllUsers() {
+    let isDel = await usersCollection.deleteMany({});
     return isDel.deletedCount >= 0;
   },
 };

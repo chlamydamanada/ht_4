@@ -12,7 +12,11 @@ allDataRouter.delete("/", async (req: Request, res: Response) => {
   if (postDel) {
     console.log("posts are del");
   }
-  if (blogDel && postDel) {
+  let userDel = await allDataRepository.deleteAllUsers();
+  if (userDel) {
+    console.log("users are del");
+  }
+  if (blogDel && postDel && userDel) {
     res.sendStatus(204);
   }
 });

@@ -10,12 +10,12 @@ export const usersQwRepository = {
     email: any
   ): Promise<any> {
     let totalCount = await usersCollection.count(login, email);
-
+    console.log(sortField, "sort fields from query users");
     const allUsers = await usersCollection
       .find({ $or: [login, email] })
-      .sort({ [sortField.sortBy]: sortField.sortDirection })
       .skip((pages.pageNumber - 1) * pages.pageSize)
       .limit(pages.pageSize)
+      .sort({ [sortField.sortBy]: sortField.sortDirection })
       .toArray();
     const items = allUsers.map((u) => ({
       id: u._id.toString(),

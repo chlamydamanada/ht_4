@@ -39,15 +39,16 @@ usersRouter.get(
     );
     const login = req.query.searchLoginTerm ? req.query.searchLoginTerm : "";
     const email = req.query.searchEmailTerm ? req.query.searchEmailTerm : " ";
-    const sortField = sortingFields.usersSortByAndDirection(
-      req.query.sortBy,
+    const sortBy = sortingFields.usersSortBy(req.query.sortBy);
+    const sortDirection = sortingFields.usersSortDirection(
       req.query.sortDirection
     );
     console.log({ login: login, email: email }, "from controller");
 
     const allUsers = await usersQwRepository.findAllUsers(
       pages,
-      sortField,
+      sortBy,
+      sortDirection,
       login,
       email
     );

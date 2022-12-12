@@ -17,12 +17,12 @@ export const sortingFields = {
     }
     return emailValue;
   },
-  async usersSortByAndDirection(sortBy: string, sortDirection: string) {
-    const sortField = sortBy ? sortBy : "createdAt";
-    let sD = sortDirection === "asc" ? 1 : -1;
-    return {
-      sortBy: sortField,
-      sortDirection: sD,
-    };
+  usersSortBy(sortBy: string) {
+    const sB = sortBy ? sortBy : "createdAt";
+    return sB;
+  },
+  usersSortDirection(sortDirection: string) {
+    const sD = sortDirection === "asc" ? 1 : -1;
+    return sD;
   },
 };

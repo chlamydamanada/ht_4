@@ -5,7 +5,8 @@ import { ObjectId } from "mongodb";
 export const usersQwRepository = {
   async findAllUsers(
     pages: any,
-    sortField: any,
+    sortBy: string,
+    sortDirection: 1 | -1,
     login: string,
     email: string
   ): Promise<any> {
@@ -16,8 +17,6 @@ export const usersQwRepository = {
       ],
     });
 
-    console.log(sortField, "sort fields from query users");
-    console.log({ login: login, email: email }, "from query");
     const allUsers = await usersCollection
       .find({
         $or: [
@@ -27,7 +26,7 @@ export const usersQwRepository = {
       })
       .skip((pages.pageNumber - 1) * pages.pageSize)
       .limit(pages.pageSize)
-      .sort({ [sortField.sortBy]: sortField.sortDirection })
+      .sort({ sortBy: sortDirection })
       .toArray();
     const items = allUsers.map((u) => ({
       id: u._id.toString(),

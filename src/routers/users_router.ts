@@ -65,12 +65,12 @@ usersRouter.delete(
   baseAuthMiddleware,
   inputValMiddleware,
   async (req: RequestWithURL<{ id: string }>, res: Response) => {
-    const isUser = usersService.findUserById(req.params.id);
-    if (!isUser) {
-      res.sendStatus(404);
-    } else {
+    const isUser = await usersService.findUserById(req.params.id);
+    if (isUser) {
       await usersService.deleteUser(req.params.id);
       res.sendStatus(204);
+    } else {
+      res.sendStatus(404);
     }
   }
 );

@@ -6,13 +6,25 @@ export const usersQwRepository = {
   async findAllUsers(
     pages: any,
     sortField: any,
-    login: any,
-    email: any
+    login: string,
+    email: string
   ): Promise<any> {
-    let totalCount = await usersCollection.count(login, email);
+    let totalCount = await usersCollection.count({
+      $or: [
+        { login: { $regex: login, $options: "i" } },
+        { email: { $regex: email, $options: "i" } },
+      ],
+    });
+
     console.log(sortField, "sort fields from query users");
+    console.log({ login: login, email: email }, "from query");
     const allUsers = await usersCollection
-      .find({ $or: [login, email] })
+      .find({
+        $or: [
+          { login: { $regex: login, $options: "i" } },
+          { email: { $regex: email, $options: "i" } },
+        ],
+      })
       .skip((pages.pageNumber - 1) * pages.pageSize)
       .limit(pages.pageSize)
       .sort({ [sortField.sortBy]: sortField.sortDirection })

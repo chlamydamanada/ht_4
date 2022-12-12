@@ -22,17 +22,28 @@ usersRouter.get(
   "/",
   baseAuthMiddleware,
   inputValMiddleware,
-  async (req: RequestWithQuery<any>, res: Response) => {
+  async (
+    req: RequestWithQuery<{
+      pageNumber: string;
+      pageSize: string;
+      searchLoginTerm: string;
+      searchEmailTerm: string;
+      sortBy: string;
+      sortDirection: string;
+    }>,
+    res: Response
+  ) => {
     const pages = await pagination.usersPagination(
       req.query.pageNumber,
       req.query.pageSize
     );
-    const login = sortingFields.usersSortingLogin(req.query.searchLoginTerm);
-    const email = sortingFields.usersSortingEmail(req.query.searchEmailTerm);
+    const login = req.query.searchLoginTerm ? req.query.searchLoginTerm : "";
+    const email = req.query.searchEmailTerm ? req.query.searchEmailTerm : " ";
     const sortField = sortingFields.usersSortByAndDirection(
       req.query.sortBy,
       req.query.sortDirection
     );
+    console.log({ login: login, email: email }, "from controller");
 
     const allUsers = await usersQwRepository.findAllUsers(
       pages,

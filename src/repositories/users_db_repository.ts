@@ -13,7 +13,11 @@ export const usersDbRepository = {
   },
   async findUserById(id: string): Promise<boolean> {
     const isUser = await usersCollection.findOne({ _id: new ObjectId(id) });
-    return !!isUser;
+    if (isUser) {
+      return true;
+    } else {
+      return false;
+    }
   },
   async findUserByLoginOrEmail(
     loginOrEmail: string

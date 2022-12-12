@@ -2,16 +2,18 @@ export const sortingFields = {
   async blogsSorting() {},
   async postsSorting() {},
   async usersSortingLogin(searchLoginTerm: string) {
+    const firstLetter = searchLoginTerm[0];
     const loginValue: any = {};
     if (searchLoginTerm) {
-      loginValue.login = { $regex: searchLoginTerm[0], $options: "i" };
+      loginValue.login = { $regex: firstLetter[0], $options: "i" };
     }
     return loginValue;
   },
   async usersSortingEmail(searchEmailTerm: string) {
+    const firstLetter = searchEmailTerm[0];
     const emailValue: any = {};
     if (searchEmailTerm) {
-      emailValue.email = { $regex: searchEmailTerm[0], $options: "i" };
+      emailValue.email = { $regex: firstLetter, $options: "i" };
     }
     return emailValue;
   },

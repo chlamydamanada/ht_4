@@ -4,14 +4,14 @@ export const sortingFields = {
   async usersSortingLogin(searchLoginTerm: string) {
     const loginValue: any = {};
     if (searchLoginTerm) {
-      loginValue.login = { $regex: searchLoginTerm, $options: "i" };
+      loginValue.login = { $regex: searchLoginTerm[0], $options: "i" };
     }
     return loginValue;
   },
   async usersSortingEmail(searchEmailTerm: string) {
     const emailValue: any = {};
     if (searchEmailTerm) {
-      emailValue.email = { $regex: searchEmailTerm, $options: "i" };
+      emailValue.email = { $regex: searchEmailTerm[0], $options: "i" };
     }
     return emailValue;
   },

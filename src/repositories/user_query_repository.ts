@@ -4,13 +4,17 @@ import { ObjectId } from "mongodb";
 
 export const usersQwRepository = {
   async findAllUsers(
-    pages: any,
+    pageNumber: number,
+    pageSize: number,
+    searchLoginTerm: string,
+    searchEmailTerm: string,
     sortBy: string,
-    sortDirection: 1 | -1,
-    login: string,
-    email: string
+    sortDirection: 1 | -1
   ): Promise<any> {
-    let totalCount = await usersCollection.count({
+    const login = searchLoginTerm ? searchLoginTerm : " ";
+    const email = searchEmailTerm ? searchEmailTerm : " ";
+
+    const totalCount = await usersCollection.count({
       $or: [
         { login: { $regex: login, $options: "i" } },
         { email: { $regex: email, $options: "i" } },
@@ -24,8 +28,8 @@ export const usersQwRepository = {
           { email: { $regex: email, $options: "i" } },
         ],
       })
-      .skip((pages.pageNumber - 1) * pages.pageSize)
-      .limit(pages.pageSize)
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
       .sort({ sortBy: sortDirection })
       .toArray();
     const items = allUsers.map((u) => ({
@@ -35,9 +39,9 @@ export const usersQwRepository = {
       createdAt: u.createdAt,
     }));
     return {
-      pagesCount: Math.ceil(totalCount / pages.pageSize),
-      page: pages.pageNumber,
-      pageSize: pages.pageSize,
+      pagesCount: Math.ceil(totalCount / pageSize),
+      page: pageNumber,
+      pageSize: pageSize,
       totalCount: totalCount,
       items: items,
     };

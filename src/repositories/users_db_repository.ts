@@ -3,9 +3,14 @@ import { ObjectId } from "mongodb";
 import { userAuthServiceType } from "../models/userAuthServiceModel";
 
 export const usersDbRepository = {
-  async createUser(user: any): Promise<string> {
+  async createUser(user: any): Promise<any> {
     const newUser = await usersCollection.insertOne(user);
-    return newUser.insertedId.toString();
+    return {
+      id: newUser.insertedId.toString(),
+      login: user.login,
+      email: user.email,
+      createdAt: user.createdAt,
+    };
   },
   async deleteUser(id: string): Promise<boolean> {
     const isDel = await usersCollection.deleteOne({ _id: new ObjectId(id) });

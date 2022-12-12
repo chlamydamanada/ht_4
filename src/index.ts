@@ -9,7 +9,7 @@ import { usersRouter } from "./routers/users_router";
 import { authRouter } from "./routers/auth_router";
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3200;
 
 app.use(bodyParser.json());
 app.use("/blogs", blogsRouter);

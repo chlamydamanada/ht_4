@@ -1,6 +1,7 @@
 import { blogsCollection, postsCollection } from "./db";
 import { ObjectId } from "mongodb";
 import { blogViewType } from "../models/blogViewModel";
+import { blogsViewType } from "../models/blogsViewModel";
 
 type searchVal = {
   name?: {};
@@ -12,7 +13,7 @@ export const blogsQwRepository = {
     pS: number,
     sortField: string,
     sD: 1 | -1
-  ) {
+  ): Promise<blogsViewType> {
     let searchValue: searchVal = {};
     if (searchNameTerm) {
       searchValue.name = { $regex: searchNameTerm, $options: "i" };

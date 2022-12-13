@@ -1,9 +1,10 @@
 import { usersCollection } from "./db";
 import { ObjectId } from "mongodb";
 import { userAuthServiceType } from "../models/userAuthServiceModel";
+import { userCreateServiceType } from "../models/userDBModel";
 
 export const usersDbRepository = {
-  async createUser(user: any): Promise<string> {
+  async createUser(user: userCreateServiceType): Promise<string> {
     const newUser = await usersCollection.insertOne(user);
     return newUser.insertedId.toString();
   },

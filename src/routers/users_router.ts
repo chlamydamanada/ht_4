@@ -13,29 +13,30 @@ import { passwordValidation } from "../middlewares/password.middleware";
 import { loginValidation } from "../middlewares/login.middleware";
 import { emailValidation } from "../middlewares/email.middleware";
 import { inputValMiddleware } from "../middlewares/inputValue.middleware";
+import { userQueryType } from "../models/userQueryModel";
+import { usersViewType } from "../models/usersViewModel";
 
 export const usersRouter = Router();
 
 usersRouter.get(
   "/",
   baseAuthMiddleware,
-  inputValMiddleware,
   async (
-    req: RequestWithQuery<{
-      pageNumber: string;
-      pageSize: string;
-      searchLoginTerm: string;
-      searchEmailTerm: string;
-      sortBy: string;
-      sortDirection: string;
-    }>,
-    res: Response
+    req: RequestWithQuery<userQueryType>,
+    res: Response<usersViewType>
   ) => {
-    const { sortBy, pageNumber, pageSize, sortDirection } = req.query;
-    let sortField = sortBy ? sortBy : "createdAt";
-    let pN = pageNumber ? +pageNumber : 1;
-    let pS = pageSize ? +pageSize : 10;
-    let sD: 1 | -1 = sortDirection === "asc" ? 1 : -1;
+    const {
+      sortBy,
+      pageNumber,
+      pageSize,
+      sortDirection,
+      searchLoginTerm,
+      searchEmailTerm,
+    } = req.query;
+    const sortField = sortBy ? sortBy : "createdAt";
+    const pN = pageNumber ? +pageNumber : 1;
+    const pS = pageSize ? +pageSize : 10;
+    const sD: 1 | -1 = sortDirection === "asc" ? 1 : -1;
 
     const allUsers = await usersQwRepository.findAllUsers(
       pN,

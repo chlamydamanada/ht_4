@@ -1,32 +1,32 @@
-import { blogsCollection, usersCollection } from "./db";
+import { usersCollection } from "./db";
 import { userViewType } from "../models/userViewModel";
 import { ObjectId } from "mongodb";
+import { usersViewType } from "../models/usersViewModel";
 
 export const usersQwRepository = {
   async findAllUsers(
     pageNumber: number,
     pageSize: number,
-    searchLoginTerm: string,
-    searchEmailTerm: string,
+    searchLoginTerm: string | undefined,
+    searchEmailTerm: string | undefined,
     sortBy: string,
     sortDirection: 1 | -1
-  ): Promise<any> {
-    const login = searchLoginTerm ? searchLoginTerm : "";
-    const email = searchEmailTerm ? searchEmailTerm : "";
-
+  ): Promise<usersViewType> {
+    const loginFilter: any = {};
+    const emailFilter: any = {};
+    if (searchLoginTerm) {
+      loginFilter.login = { $regex: searchLoginTerm, $options: "i" };
+    }
+    if (searchEmailTerm) {
+      emailFilter.email = { $regex: searchEmailTerm, $options: "i" };
+    }
     const totalCount = await usersCollection.count({
-      $or: [
-        { login: { $regex: login, $options: "i" } },
-        { email: { $regex: email, $options: "i" } },
-      ],
+      $or: [loginFilter, emailFilter],
     });
 
     const allUsers = await usersCollection
       .find({
-        $or: [
-          { login: { $regex: login, $options: "i" } },
-          { email: { $regex: email, $options: "i" } },
-        ],
+        $or: [loginFilter, emailFilter],
       })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)

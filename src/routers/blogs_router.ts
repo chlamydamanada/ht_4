@@ -24,12 +24,16 @@ import { blogQueryType } from "../models/blogQueryModel";
 import { postViewType } from "../models/postViewModel";
 import { postQueryType } from "../models/postQueryModel";
 import { postWithBlogIdCreteType } from "../models/postWithBlogIdCerateModel";
+import { blogsViewType } from "../models/blogsViewModel";
 
 export const blogsRouter = Router();
 
 blogsRouter.get(
   "/",
-  async (req: RequestWithQuery<blogQueryType>, res: Response) => {
+  async (
+    req: RequestWithQuery<blogQueryType>,
+    res: Response<blogsViewType>
+  ) => {
     const { sortBy, pageNumber, pageSize, searchNameTerm, sortDirection } =
       req.query;
     let sortField = sortBy ? sortBy : "createdAt";

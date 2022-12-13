@@ -30,7 +30,7 @@ export const usersQwRepository = {
       })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
-      .sort({ sortBy: sortDirection })
+      .sort({ [sortBy]: sortDirection })
       .toArray();
     const items = allUsers.map((u) => ({
       id: u._id.toString(),

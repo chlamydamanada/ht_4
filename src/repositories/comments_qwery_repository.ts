@@ -41,9 +41,8 @@ export const commentsQweryRepository = {
         userLogin: comment.userLogin,
         createdAt: comment.createdAt,
       };
-    }
-    if (!comment) {
-      return undefined;
+    } else {
+      return false;
     }
   },
 };

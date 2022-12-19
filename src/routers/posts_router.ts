@@ -42,10 +42,10 @@ postsRouter.get(
   "/:id",
   async (req: RequestWithURL<{ id: string }>, res: Response<postViewType>) => {
     let post = await postsQwRepository.findPost(req.params.id);
-    if (post) {
-      res.status(200).send(post);
-    } else {
+    if (!post) {
       res.sendStatus(404);
+    } else {
+      res.status(200).send(post);
     }
   }
 );

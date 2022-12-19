@@ -11,9 +11,10 @@ export const userIsOwnerOfCommentMiddleware = async (
     req.params.commentId
   );
   if (!comment) {
-    res.sendStatus(404);
+    res.status(404).send("comment doesn't exist");
+    return;
   } else if (req.user!.id !== comment.userId) {
-    res.sendStatus(403);
+    res.status(403).send("you try edit the comment that is not your own");
     return;
   } else {
     next();

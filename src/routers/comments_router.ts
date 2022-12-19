@@ -45,6 +45,8 @@ commentsRouter.put(
       req.params.commentId,
       req.body.content
     );
-    res.sendStatus(204);
+    if (newComment) {
+      res.sendStatus(204);
+    }
   }
 );

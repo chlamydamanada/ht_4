@@ -140,13 +140,13 @@ postsRouter.get(
     let pN = pageNumber ? +pageNumber : 1;
     let pS = pageSize ? +pageSize : 10;
     let sD: 1 | -1 = sortDirection === "asc" ? 1 : -1;
-    const posts = await commentsQweryRepository.findComments(
+    const comments = await commentsQweryRepository.findComments(
       req.params.postId,
       pN,
       pS,
       sortField,
       sD
     );
-    res.status(200).send(posts);
+    res.status(200).send(comments);
   }
 );

@@ -26,9 +26,11 @@ export const authService = {
   async getUserIdByToken(token: string) {
     try {
       const result = jwt.verify(token, settings.jwt_secret);
+      console.log(result);
       // @ts-ignore
       return result.userId;
     } catch (error) {
+      console.log("my error:" + error);
       return null;
     }
   },

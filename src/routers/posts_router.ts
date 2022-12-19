@@ -13,11 +13,16 @@ import {
   RequestWithQuery,
   RequestWithURL,
   RequestWithUrlAndBody,
+  RequestWithUrlAndQuery,
 } from "../models/request_types";
 import { postQueryType } from "../models/postQueryModel";
 import { postViewType } from "../models/postViewModel";
 import { postCreateType } from "../models/postCreateModel";
 import { postUpdateType } from "../models/postUpdateModel";
+import { bearerAuthMiddleware } from "../middlewares/bearerAuthrization.middleware";
+import { commentsService } from "../domain/comments_service";
+import { contentOfCommentsMiddleware } from "../middlewares/contentOfComments.middleware";
+import { commentsQweryRepository } from "../repositories/comments_qwery_repository";
 
 export const postsRouter = Router();
 
@@ -104,5 +109,44 @@ postsRouter.put(
       );
       return res.sendStatus(204);
     }
+  }
+);
+postsRouter.post(
+  "/:postId/comments",
+  bearerAuthMiddleware,
+  contentOfCommentsMiddleware,
+  inputValMiddleware,
+  async (req: Request, res: Response) => {
+    const isPost = await postsQwRepository.findPost(req.params.postId);
+    if (!isPost) {
+      res.sendStatus(404);
+    }
+    const newComment = await commentsService.createComment(
+      req.body.content,
+      req.user,
+      req.params.postId
+    );
+    res.sendStatus(204);
+  }
+);
+postsRouter.get(
+  "/:postId/comments",
+  async (
+    req: RequestWithUrlAndQuery<{ postId: string }, postQueryType>,
+    res: Response
+  ) => {
+    const { sortBy, pageNumber, pageSize, sortDirection } = req.query;
+    let sortField: string = sortBy ? sortBy : "createdAt";
+    let pN = pageNumber ? +pageNumber : 1;
+    let pS = pageSize ? +pageSize : 10;
+    let sD: 1 | -1 = sortDirection === "asc" ? 1 : -1;
+    const posts = await commentsQweryRepository.findComments(
+      req.params.postId,
+      pN,
+      pS,
+      sortField,
+      sD
+    );
+    res.status(200).send(posts);
   }
 );

@@ -1,7 +1,7 @@
 import { usersCollection } from "./db";
 import { ObjectId } from "mongodb";
 import { userAuthServiceType } from "../models/userAuthServiceModel";
-import { userCreateServiceType } from "../models/userDBModel";
+import { userCreateServiceType, userDbType } from "../models/userDBModel";
 
 export const usersDbRepository = {
   async createUser(user: userCreateServiceType): Promise<string> {
@@ -28,6 +28,7 @@ export const usersDbRepository = {
     });
     if (user) {
       return {
+        id: user._id.toString(),
         hash: user.passwordHash,
         salt: user.passwordSalt,
       };

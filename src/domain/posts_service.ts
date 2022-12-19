@@ -1,5 +1,4 @@
 import { postsRepository } from "../repositories/posts_db_repository";
-import { blogsRepository } from "../repositories/blogs_db_repository";
 import { postCreateServiceType } from "../models/postCreateModel";
 
 export const postsService = {

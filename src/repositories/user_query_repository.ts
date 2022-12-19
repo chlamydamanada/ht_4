@@ -46,7 +46,7 @@ export const usersQwRepository = {
       items: items,
     };
   },
-  async findUserById(userId: string): Promise<userViewType | undefined> {
+  async findUserById(userId: any): Promise<userViewType | undefined> {
     const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
     if (!user) {
       return undefined;

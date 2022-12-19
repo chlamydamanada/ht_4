@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { commentsQweryRepository } from "../repositories/comments_qwery_repository";
+import { RequestWithURL } from "../models/request_types";
 
 export const userIsOwnerOfCommentMiddleware = async (
-  req: Request,
+  req: RequestWithURL<{ commentId: string }>,
   res: Response,
   next: NextFunction
 ) => {
@@ -11,9 +12,7 @@ export const userIsOwnerOfCommentMiddleware = async (
   );
   if (!comment) {
     res.sendStatus(404);
-    return;
-  }
-  if (req.user!.id !== comment.userId) {
+  } else if (req.user!.id !== comment.userId) {
     res.sendStatus(403);
     return;
   } else {

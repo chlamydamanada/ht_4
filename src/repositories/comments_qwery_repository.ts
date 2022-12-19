@@ -1,4 +1,5 @@
 import { commentsCollection } from "./db";
+import { ObjectId } from "mongodb";
 
 export const commentsQweryRepository = {
   async findComments(
@@ -27,20 +28,22 @@ export const commentsQweryRepository = {
       page: pN,
       pageSize: pS,
       totalCount: totalCount,
-      items,
+      items: items,
     };
   },
   async findCommentById(id: string) {
-    const comment = await commentsCollection.findOne({ _id: new Object(id) });
-    if (!comment) {
-      return null;
+    let comment = await commentsCollection.findOne({ _id: new ObjectId(id) });
+    if (comment) {
+      return {
+        id: comment._id.toString(),
+        content: comment.content,
+        userId: comment.userId,
+        userLogin: comment.userLogin,
+        createdAt: comment.createdAt,
+      };
     }
-    return {
-      id: comment._id.toString(),
-      content: comment.content,
-      userId: comment.userId,
-      userLogin: comment.userLogin,
-      createdAt: comment.createdAt,
-    };
+    if (!comment) {
+      return undefined;
+    }
   },
 };

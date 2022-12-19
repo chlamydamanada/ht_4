@@ -126,7 +126,7 @@ postsRouter.post(
       req.user,
       req.params.postId
     );
-    res.sendStatus(204);
+    res.status(204).send(newComment);
   }
 );
 postsRouter.get(

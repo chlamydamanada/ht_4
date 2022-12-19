@@ -10,15 +10,15 @@ import { inputValMiddleware } from "../middlewares/inputValue.middleware";
 export const commentsRouter = Router();
 
 commentsRouter.get(
-  "/:id",
-  async (req: RequestWithURL<{ id: string }>, res: Response) => {
+  "/:commentId",
+  async (req: RequestWithURL<{ commentId: string }>, res: Response) => {
     const comment = await commentsQweryRepository.findCommentById(
-      req.params.id
+      req.params.commentId
     );
-    if (comment) {
-      res.status(200).send(comment);
-    } else {
+    if (!comment) {
       res.sendStatus(404);
+    } else {
+      res.status(200).send(comment);
     }
   }
 );

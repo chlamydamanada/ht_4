@@ -127,7 +127,7 @@ postsRouter.post(
         req.user,
         req.params.postId
       );
-      res.status(204).send(newComment);
+      res.status(201).send(newComment);
     }
   }
 );

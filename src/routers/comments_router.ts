@@ -13,6 +13,8 @@ commentsRouter.get("/:commentId", async (req: Request, res: Response) => {
   const comment = await commentsQweryRepository.findCommentById(
     req.params.commentId
   );
+  console.log(req.params.commentId, "comment id is defined or not");
+  console.log(comment, "comments router");
   if (!comment) {
     res.sendStatus(404);
   } else {
@@ -25,6 +27,10 @@ commentsRouter.delete(
   userIsOwnerOfCommentMiddleware,
   async (req: Request, res: Response) => {
     const isDel = await commentsService.deleteComment(req.params.commentId);
+    console.log(
+      req.params.commentId,
+      "comment id in delete method is defined or not"
+    );
     res.sendStatus(204);
   }
 );
@@ -38,6 +44,10 @@ commentsRouter.put(
     const newComment = await commentsService.updateComment(
       req.params.commentId,
       req.body.content
+    );
+    console.log(
+      req.params.commentId,
+      "comment id in pu method is defined or not"
     );
     if (newComment) {
       res.sendStatus(204);

@@ -1,6 +1,6 @@
 import { usersDbRepository } from "../repositories/users_db_repository";
 import { usersService } from "./users_service";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { settings } from "../settings/settings";
 import { userAuthServiceType } from "../models/userAuthServiceModel";
 
@@ -25,10 +25,9 @@ export const authService = {
   },
   async getUserIdByToken(token: string) {
     try {
-      const result = jwt.verify(token, settings.jwt_secret);
+      const result: any = jwt.verify(token, settings.jwt_secret);
       console.log(result);
 
-      // @ts-ignore
       return result.userId;
     } catch (error) {
       console.log("my error:" + error);

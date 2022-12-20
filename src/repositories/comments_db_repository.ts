@@ -1,6 +1,6 @@
 import { commentsCollection } from "./db";
-import { ObjectId } from "mongodb";
 import { commentViewType } from "../models/commentViewModel";
+import { ObjectId } from "mongodb";
 
 export const commentsRepository = {
   async createComment(comment: any): Promise<commentViewType> {

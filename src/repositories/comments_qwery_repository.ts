@@ -32,6 +32,7 @@ export const commentsQweryRepository = {
     };
   },
   async findCommentById(id: string) {
+    console.log(id, "from comments query repository");
     let comment = await commentsCollection.findOne({ _id: new ObjectId(id) });
     if (comment) {
       return {

@@ -27,6 +27,7 @@ export const authService = {
     try {
       const result = jwt.verify(token, settings.jwt_secret);
       console.log(result);
+
       // @ts-ignore
       return result.userId;
     } catch (error) {

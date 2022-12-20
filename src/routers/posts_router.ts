@@ -120,13 +120,14 @@ postsRouter.post(
     const isPost = await postsQwRepository.findPost(req.params.postId);
     if (!isPost) {
       res.sendStatus(404);
+    } else {
+      const newComment = await commentsService.createComment(
+        req.body.content,
+        req.user,
+        req.params.postId
+      );
+      res.status(204).send(newComment);
     }
-    const newComment = await commentsService.createComment(
-      req.body.content,
-      req.user,
-      req.params.postId
-    );
-    res.status(204).send(newComment);
   }
 );
 postsRouter.get(
@@ -135,18 +136,27 @@ postsRouter.get(
     req: RequestWithUrlAndQuery<{ postId: string }, postQueryType>,
     res: Response
   ) => {
-    const { sortBy, pageNumber, pageSize, sortDirection } = req.query;
-    let sortField: string = sortBy ? sortBy : "createdAt";
-    let pN = pageNumber ? +pageNumber : 1;
-    let pS = pageSize ? +pageSize : 10;
-    let sD: 1 | -1 = sortDirection === "asc" ? 1 : -1;
-    const comments = await commentsQweryRepository.findComments(
-      req.params.postId,
-      pN,
-      pS,
-      sortField,
-      sD
-    );
-    res.status(200).send(comments);
+    const isPost = await postsQwRepository.findPost(req.params.postId);
+    if (!isPost) {
+      res.sendStatus(404);
+    } else {
+      const { sortBy, pageNumber, pageSize, sortDirection } = req.query;
+      let sortField: string = sortBy ? sortBy : "createdAt";
+      let pN = pageNumber ? +pageNumber : 1;
+      let pS = pageSize ? +pageSize : 10;
+      let sD: 1 | -1 = sortDirection === "asc" ? 1 : -1;
+      const comments = await commentsQweryRepository.findComments(
+        req.params.postId,
+        pN,
+        pS,
+        sortField,
+        sD
+      );
+      if (!comments) {
+        res.sendStatus(404);
+      } else {
+        res.status(200).send(comments);
+      }
+    }
   }
 );

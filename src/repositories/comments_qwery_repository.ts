@@ -42,7 +42,7 @@ export const commentsQweryRepository = {
         createdAt: comment.createdAt,
       };
     } else {
-      return false;
+      return undefined;
     }
   },
 };

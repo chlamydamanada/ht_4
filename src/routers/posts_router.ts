@@ -120,6 +120,7 @@ postsRouter.post(
     const isPost = await postsQwRepository.findPost(req.params.postId);
     if (!isPost) {
       res.sendStatus(404);
+      return;
     } else {
       const newComment = await commentsService.createComment(
         req.body.content,
@@ -133,12 +134,13 @@ postsRouter.post(
 postsRouter.get(
   "/:postId/comments",
   async (
-    req: RequestWithUrlAndQuery<{ postId: string }, postQueryType>,
+    req: RequestWithUrlAndQuery<{ postId: string }, any>,
     res: Response
   ) => {
     const isPost = await postsQwRepository.findPost(req.params.postId);
     if (!isPost) {
       res.sendStatus(404);
+      return;
     } else {
       const { sortBy, pageNumber, pageSize, sortDirection } = req.query;
       let sortField: string = sortBy ? sortBy : "createdAt";
@@ -154,6 +156,7 @@ postsRouter.get(
       );
       if (!comments) {
         res.sendStatus(404);
+        return;
       } else {
         res.status(200).send(comments);
       }

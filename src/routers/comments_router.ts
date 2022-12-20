@@ -24,9 +24,9 @@ commentsRouter.get("/:commentId", async (req: Request, res: Response) => {
 commentsRouter.delete(
   "/:commentId",
   bearerAuthMiddleware,
-  userIsOwnerOfCommentMiddleware,
+  //userIsOwnerOfCommentMiddleware,
   async (req: Request, res: Response) => {
-    const isDel = await commentsService.deleteComment(req.params.commentId);
+    await commentsService.deleteComment(req.params.commentId);
     console.log(
       req.params.commentId,
       "comment id in delete method is defined or not"
@@ -37,7 +37,7 @@ commentsRouter.delete(
 commentsRouter.put(
   "/:commentId",
   bearerAuthMiddleware,
-  userIsOwnerOfCommentMiddleware,
+  //userIsOwnerOfCommentMiddleware,
   contentOfCommentsMiddleware,
   inputValMiddleware,
   async (req: Request, res: Response) => {

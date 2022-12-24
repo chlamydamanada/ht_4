@@ -1,9 +1,10 @@
 import { commentsCollection } from "./db";
 import { commentViewType } from "../models/commentViewModel";
 import { ObjectId } from "mongodb";
+import { commentDbType } from "../models/commentDbModel";
 
 export const commentsRepository = {
-  async createComment(comment: any): Promise<commentViewType> {
+  async createComment(comment: commentDbType): Promise<commentViewType> {
     const result = await commentsCollection.insertOne(comment);
     return {
       id: result.insertedId.toString(),
@@ -13,7 +14,7 @@ export const commentsRepository = {
       createdAt: comment.createdAt,
     };
   },
-  async deleteComment(commentId: string) {
+  async deleteComment(commentId: string): Promise<boolean> {
     const isDel = await commentsCollection.deleteOne({
       _id: new ObjectId(commentId),
     });

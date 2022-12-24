@@ -27,10 +27,7 @@ commentsRouter.delete(
   userIsOwnerOfCommentMiddleware,
   async (req: Request, res: Response) => {
     await commentsService.deleteComment(req.params.commentId);
-    console.log(
-      req.params.commentId,
-      "comment id in delete method is defined or not"
-    );
+
     res.sendStatus(204);
   }
 );
@@ -45,10 +42,7 @@ commentsRouter.put(
       req.params.commentId,
       req.body.content
     );
-    console.log(
-      req.params.commentId,
-      "comment id in pu method is defined or not"
-    );
+
     if (newComment) {
       res.sendStatus(204);
     }

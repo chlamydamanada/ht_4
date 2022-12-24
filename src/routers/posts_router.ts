@@ -23,6 +23,7 @@ import { bearerAuthMiddleware } from "../middlewares/bearerAuthrization.middlewa
 import { commentsService } from "../domain/comments_service";
 import { contentOfCommentsMiddleware } from "../middlewares/contentOfComments.middleware";
 import { commentsQweryRepository } from "../repositories/comments_qwery_repository";
+import { commentViewType } from "../models/commentViewModel";
 
 export const postsRouter = Router();
 
@@ -116,7 +117,10 @@ postsRouter.post(
   bearerAuthMiddleware,
   contentOfCommentsMiddleware,
   inputValMiddleware,
-  async (req: Request, res: Response) => {
+  async (
+    req: RequestWithUrlAndBody<{ postId: string }, { content: string }>,
+    res: Response<commentViewType>
+  ) => {
     const isPost = await postsQwRepository.findPost(req.params.postId);
     if (!isPost) {
       res.sendStatus(404);
@@ -124,7 +128,7 @@ postsRouter.post(
     } else {
       const newComment = await commentsService.createComment(
         req.body.content,
-        req.user,
+        req.user!,
         req.params.postId
       );
       res.status(201).send(newComment);

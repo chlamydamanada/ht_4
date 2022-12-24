@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { emailConfirmationType } from "./emailConfirmationServiceModel";
 
 export type userCreateServiceType = {
   login: string;
@@ -8,10 +9,10 @@ export type userCreateServiceType = {
   createdAt: string;
 };
 export type userDbType = {
-  _id: ObjectId;
   login: string;
   email: string;
   passwordHash: string;
   passwordSalt: string;
   createdAt: string;
+  emailConfirmation: emailConfirmationType;
 };

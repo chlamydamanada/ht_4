@@ -16,6 +16,7 @@ import { userEmailType } from "../models/userEmailModel";
 import { codeValidation } from "../middlewares/code.middleware";
 import { emailExistValidation } from "../middlewares/emailExist.middleware";
 import { emailIsConfirmedValidation } from "../middlewares/emailIsConfirmed.middleware";
+import { loginExistValidation } from "../middlewares/loginExist.middleware";
 
 export const authRouter = Router();
 
@@ -55,6 +56,7 @@ authRouter.post(
   "/registration",
   passwordValidation,
   loginValidation,
+  loginExistValidation,
   emailValidation,
   emailExistValidation,
   inputValMiddleware,

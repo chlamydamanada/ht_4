@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { userAuthServiceType } from "../models/userAuthServiceModel";
 import { userCreateServiceType, userDbType } from "../models/userDBModel";
 import { confirmationCodeType } from "../models/confirmationCodeModel";
+import { emailConfirmationType } from "../models/emailConfirmationServiceModel";
 
 export const usersDbRepository = {
   async createUser(user: userCreateServiceType): Promise<string> {
@@ -61,5 +62,15 @@ export const usersDbRepository = {
       { $set: { "emailConfirmation.isConfirmed": true } }
     );
     return result.matchedCount === 1;
+  },
+  async updateEmailConfirmation(
+    userId: string,
+    newEmailConfirmation: emailConfirmationType
+  ): Promise<any> {
+    const result = await usersCollection.updateOne(
+      { _id: new ObjectId(userId) },
+      { $set: { emailConfirmation: newEmailConfirmation } }
+    );
+    return result;
   },
 };

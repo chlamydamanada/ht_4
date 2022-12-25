@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import add from "date-fns/add";
 import { emailAdapter } from "../adapters/email_adapter";
 import { v4 } from "uuid/index";
+import { emailConfirmationType } from "../models/emailConfirmationServiceModel";
 
 export const authService = {
   async checkCredentials(loginOrEmail: string, password: string) {
@@ -52,7 +53,7 @@ export const authService = {
       passwordSalt
     );
 
-    const newUser: any = {
+    const newUser: userDbType = {
       login: login,
       email: email,
       passwordHash,
@@ -84,11 +85,27 @@ export const authService = {
   },
   async checkEmailIsConfirmed(email: string) {
     const user = await usersDbRepository.findUserByLoginOrEmail(email);
+    const newEmailConfirmation = this.createNewConfirmationCode();
+    const newUser = await usersDbRepository.updateEmailConfirmation(
+      user!.id,
+      newEmailConfirmation
+    );
     try {
-      const sendEmail = await emailAdapter.sendEmail(user);
+      const sendEmail = await emailAdapter.sendEmail(newUser);
       return sendEmail;
     } catch (error) {
       // await usersDbRepository.deleteUser(id)
     }
+  },
+  createNewConfirmationCode(): emailConfirmationType {
+    const newEmailConfirmation: emailConfirmationType = {
+      confirmationCode: uuidv4(),
+      expirationDate: add(new Date(), {
+        hours: 1,
+        minutes: 30,
+      }),
+      isConfirmed: false,
+    };
+    return newEmailConfirmation;
   },
 };

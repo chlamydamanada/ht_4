@@ -20,7 +20,7 @@ export const usersService = {
       passwordSalt,
       createdAt: new Date().toISOString(),
       emailConfirmation: {
-        confirmationCode: uuidv4,
+        confirmationCode: uuidv4(),
         expirationDate: add(new Date(), {
           hours: 1,
           minutes: 30,

@@ -71,6 +71,5 @@ export const usersDbRepository = {
       { _id: new ObjectId(userId) },
       { $set: { emailConfirmation: newEmailConfirmation } }
     );
-    return result;
   },
 };

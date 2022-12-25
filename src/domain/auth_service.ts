@@ -86,16 +86,19 @@ export const authService = {
   async checkEmailIsConfirmed(email: string) {
     const user = await usersDbRepository.findUserByLoginOrEmail(email);
     const newEmailConfirmation = this.createNewConfirmationCode();
-    const newUser = await usersDbRepository.updateEmailConfirmation(
+    await usersDbRepository.updateEmailConfirmation(
       user!.id,
       newEmailConfirmation
     );
+    const newUser = await usersDbRepository.findUserByLoginOrEmail(email);
+
     try {
       const sendEmail = await emailAdapter.sendEmail(newUser);
       return sendEmail;
     } catch (error) {
       // await usersDbRepository.deleteUser(id)
     }
+    return true;
   },
   createNewConfirmationCode(): emailConfirmationType {
     const newEmailConfirmation: emailConfirmationType = {

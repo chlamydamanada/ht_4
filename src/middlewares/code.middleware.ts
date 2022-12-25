@@ -6,11 +6,11 @@ export const codeValidation = body("code")
   .isString()
   .custom(async (code: string) => {
     const user = await usersDbRepository.findUserByCode(code);
-    if (!user) {
+    /*if (!user) {
       throw new Error("User not found");
-    }
-    if (user.emailConfirmation.isConfirmed) {
-      throw new Error("User is confirmed");
+    }*/
+    if (user.emailConfirmation.isConfirmed === true) {
+      throw new Error("email is confirmed");
     }
     if (user.emailConfirmation.expirationDate < new Date()) {
       throw new Error("Confirmation time is out");

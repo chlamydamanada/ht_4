@@ -7,7 +7,7 @@ export const emailIsConfirmedValidation = body("email").custom(
     if (!user) {
       throw new Error("User not found");
     }
-    if (user.emailConfirmation.isConfirmed) {
+    if (user.emailConfirmation.isConfirmed === true) {
       throw new Error("email already is confirmed");
     }
     return true;

@@ -56,9 +56,9 @@ authRouter.post(
   "/registration",
   passwordValidation,
   loginValidation,
-  loginExistValidation,
+  //loginExistValidation,
   emailValidation,
-  emailExistValidation,
+  //emailExistValidation,
   inputValMiddleware,
   async (req: RequestWithBody<userCreateType>, res: Response) => {
     await authService.createUser(

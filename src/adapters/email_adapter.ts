@@ -21,7 +21,7 @@ export const emailAdapter = {
         `          <a href='https://somesite.com/confirm-email?code=${fullUser.emailConfirmation.confirmationCode}'>complete registration</a>\n` +
         "      </p>\n", // html body
     });
-    console.log(code);
+
     if (info) {
       return true;
     }

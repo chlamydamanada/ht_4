@@ -45,7 +45,7 @@ export const usersDbRepository = {
       return fullUser;
     }
   },
-  async findUserByCode(code: string) {
+  async findUserByCode(code: string): Promise<any> {
     const user = await usersCollection.findOne({
       "emailConfirmation.confirmationCode": code,
     });

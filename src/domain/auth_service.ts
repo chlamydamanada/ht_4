@@ -80,21 +80,14 @@ export const authService = {
   },
   async confirmEmail(code: string): Promise<boolean> {
     const user = await usersDbRepository.findUserByCode(code);
-    if (!user) return false;
-    if (user.emailConfirmation.isConfirmed) return false;
-    if (user.emailConfirmation.expirationDate < new Date()) return false;
-    const isConfirmed = await usersDbRepository.updateConfirmation(user._id);
-    return isConfirmed;
+    return await usersDbRepository.updateConfirmation(user._id);
   },
   async checkEmailIsConfirmed(email: string) {
     const user = await usersDbRepository.findUserByLoginOrEmail(email);
-    if (!user) return false;
-    if (user.emailConfirmation.isConfirmed) return false;
     try {
       const sendEmail = await emailAdapter.sendEmail(user);
       return sendEmail;
     } catch (error) {
-      console.log(error);
       // await usersDbRepository.deleteUser(id)
     }
   },

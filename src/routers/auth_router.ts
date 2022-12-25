@@ -13,6 +13,9 @@ import { loginValidation } from "../middlewares/login.middleware";
 import { usersService } from "../domain/users_service";
 import { confirmationCodeType } from "../models/confirmationCodeModel";
 import { userEmailType } from "../models/userEmailModel";
+import { codeValidation } from "../middlewares/code.middleware";
+import { emailExistValidation } from "../middlewares/emailExist.middleware";
+import { emailIsConfirmedValidation } from "../middlewares/emailIsConfirmed.middleware";
 
 export const authRouter = Router();
 
@@ -53,6 +56,7 @@ authRouter.post(
   passwordValidation,
   loginValidation,
   emailValidation,
+  emailExistValidation,
   inputValMiddleware,
   async (req: RequestWithBody<userCreateType>, res: Response) => {
     await authService.createUser(
@@ -65,12 +69,14 @@ authRouter.post(
 );
 authRouter.post(
   "/registration-confirmation",
+  codeValidation,
+  inputValMiddleware,
   async (req: RequestWithBody<{ code: string }>, res: Response) => {
     const isConfirmed = await authService.confirmEmail(req.body.code);
     if (isConfirmed) {
       res.sendStatus(204);
     } else {
-      res.sendStatus(400);
+      res.sendStatus(404);
     }
   }
 );
@@ -78,13 +84,14 @@ authRouter.post(
 authRouter.post(
   "/registration-email-resending",
   emailValidation,
+  emailIsConfirmedValidation,
   inputValMiddleware,
   async (req: RequestWithBody<{ email: string }>, res: Response) => {
     const result = await authService.checkEmailIsConfirmed(req.body.email);
-    if (!result) {
-      res.sendStatus(400);
-    } else {
+    if (result) {
       res.sendStatus(204);
+    } else {
+      res.sendStatus(404);
     }
   }
 );

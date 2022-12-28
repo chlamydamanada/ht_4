@@ -38,7 +38,7 @@ authRouter.post(
       console.log(refreshToken);
       res
         .cookie("refreshToken", refreshToken, {
-          //expires: new Date(Date.now() + 20000),
+          expires: new Date(Date.now() + 20000),
           httpOnly: true,
           secure: true,
         })
@@ -59,7 +59,7 @@ authRouter.post(
       console.log(refreshToken);
       res
         .cookie("refreshToken", refreshToken, {
-          //expires: new Date(Date.now() + 20000),
+          expires: new Date(Date.now() + 20000),
           httpOnly: true,
           secure: true,
         })

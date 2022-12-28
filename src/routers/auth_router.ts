@@ -74,7 +74,7 @@ authRouter.post(
   async (req: Request, res: Response) => {
     const isDelRT = await authService.deleteRefreshToken(req.user!.id);
     if (isDelRT) {
-      res.sendStatus(204);
+      res.clearCookie("refreshToken").sendStatus(204);
     }
   }
 );

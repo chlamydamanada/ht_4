@@ -10,8 +10,8 @@ export const refreshTokenMiddleware = async (
   if (!req.cookies.refreshToken) {
     res.status(401).send("refresh token not found");
   }
-  const kookie = req.cookies.refreshToken;
-  const refreshToken = kookie.slice(13);
+  const refreshToken = req.cookies.refreshToken;
+
   console.log("!!!!!!!!", refreshToken);
   const user = await usersQwRepository.findUserByRefreshToken(refreshToken);
   if (!user) {

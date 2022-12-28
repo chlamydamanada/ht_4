@@ -10,9 +10,8 @@ export const refreshTokenMiddleware = async (
   if (!req.cookies.refreshToken) {
     res.status(401).send("refresh token not found");
   }
-  const user = await usersQwRepository.findUserByRefreshToken(
-    req.cookies.refreshToken
-  );
+  const refreshToken = req.cookies.refreshToken.slice(13);
+  const user = await usersQwRepository.findUserByRefreshToken(refreshToken);
   if (!user) {
     res.status(401).send("refresh token is expired or incorrect");
   }

@@ -8,14 +8,16 @@ import { userDbType } from "../models/userDBModel";
 import { v4 as uuidv4 } from "uuid";
 import add from "date-fns/add";
 import { emailAdapter } from "../adapters/email_adapter";
-import { v4 } from "uuid/index";
+
 import { emailConfirmationType } from "../models/emailConfirmationServiceModel";
+import { CookieOptions } from "express-serve-static-core";
+import { usersCollection } from "../repositories/db";
 
 export const authService = {
   async checkCredentials(loginOrEmail: string, password: string) {
     const user = await usersDbRepository.findUserByLoginOrEmail(loginOrEmail);
     if (!user) return false;
-    if (!user.emailConfirmation.isConfirmed) return false;
+
     const userHash = await usersService.generateHash(password, user.salt);
     if (user.hash === userHash) {
       return user;
@@ -23,24 +25,42 @@ export const authService = {
       return false;
     }
   },
-  async createJWT(user: userAuthServiceType) {
-    const token = jwt.sign({ userId: user.id }, settings.jwt_secret, {
-      expiresIn: "1h",
+  async createAccessToken(userID: string) {
+    const token = jwt.sign({ userId: userID }, settings.jwt_secretAT, {
+      expiresIn: "10 seconds",
     });
     return {
       accessToken: token,
     };
   },
-  async getUserIdByToken(token: string) {
+  async createRefreshToken(userID: string) {
+    const token = jwt.sign({ userId: userID }, settings.jwt_secretRT, {
+      expiresIn: "20 seconds",
+    });
+    await usersDbRepository.updateRefreshToken(userID, token);
+    return token;
+  },
+  async getUserIdByToken(token: string): Promise<any> {
     try {
-      const result: any = jwt.verify(token, settings.jwt_secret);
-      console.log(result);
-
+      const result: any = jwt.verify(token, settings.jwt_secretAT);
       return result.userId;
     } catch (error) {
       console.log("my error:" + error);
       return null;
     }
+  },
+  async getUserIdByRefreshToken(token: string): Promise<any> {
+    try {
+      const result: any = jwt.verify(token, settings.jwt_secretRT);
+      return result.userId;
+    } catch (error) {
+      console.log("my error:" + error);
+      return null;
+    }
+  },
+  async deleteRefreshToken(userId: string) {
+    const isDelRT = await usersDbRepository.deleteRefreshToken(userId);
+    return isDelRT;
   },
   async createUser(
     login: string,
@@ -75,7 +95,6 @@ export const authService = {
     } catch (error) {
       console.log(error);
       // await usersDbRepository.deleteUser(id)
-      return null;
     }
     return userId;
   },

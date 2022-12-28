@@ -17,6 +17,8 @@ import { codeValidation } from "../middlewares/code.middleware";
 import { emailExistValidation } from "../middlewares/emailExist.middleware";
 import { emailIsConfirmedValidation } from "../middlewares/emailIsConfirmed.middleware";
 import { loginExistValidation } from "../middlewares/loginExist.middleware";
+import { meViewType } from "../models/meViewModel";
+import { refreshTokenMiddleware } from "../middlewares/refreshToken.middleware";
 
 export const authRouter = Router();
 
@@ -31,23 +33,62 @@ authRouter.post(
       req.body.password
     );
     if (user) {
-      const token = await authService.createJWT(user);
-      res.status(200).send(token);
+      const accessToken = await authService.createAccessToken(user.id);
+      const refreshToken = await authService.createRefreshToken(user.id);
+      console.log(refreshToken);
+      res
+        .cookie("refreshToken", refreshToken, {
+          //expires: new Date(Date.now() + 20000),
+          httpOnly: true,
+          secure: true,
+        })
+        .status(200)
+        .send(accessToken);
     } else {
       res.sendStatus(401);
+    }
+  }
+);
+authRouter.post(
+  "/refresh-token",
+  refreshTokenMiddleware,
+  async (req: Request, res: Response) => {
+    if (req.user) {
+      const accessToken = await authService.createAccessToken(req.user.id);
+      const refreshToken = await authService.createRefreshToken(req.user.id);
+      console.log(refreshToken);
+      res
+        .cookie("refreshToken", refreshToken, {
+          //expires: new Date(Date.now() + 20000),
+          httpOnly: true,
+          secure: true,
+        })
+        .status(200)
+        .send(accessToken);
+    }
+  }
+);
+authRouter.post(
+  "/logout",
+  refreshTokenMiddleware,
+  async (req: Request, res: Response) => {
+    const isDelRT = await authService.deleteRefreshToken(req.user!.id);
+    if (isDelRT) {
+      res.sendStatus(204);
     }
   }
 );
 authRouter.get(
   "/me",
   bearerAuthMiddleware,
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response<meViewType>) => {
     if (req.user) {
-      const me = {
+      const me: meViewType = {
         email: req.user.email,
         login: req.user.login,
         userId: req.user.id,
       };
+
       res.status(200).send(me);
     }
   }

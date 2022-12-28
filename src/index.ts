@@ -5,6 +5,7 @@ import { allDataRouter } from "./routers/all_data_router";
 import { parserMiddleware } from "./parserMiddleware";
 import { runDb } from "./repositories/db";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import { usersRouter } from "./routers/users_router";
 import { authRouter } from "./routers/auth_router";
 import { commentsRouter } from "./routers/comments_router";
@@ -14,6 +15,7 @@ const app = express();
 const port = process.env.PORT || 3200;
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use("/blogs", blogsRouter);
 app.use("/posts", postsRouter);
 app.use("/auth", authRouter);

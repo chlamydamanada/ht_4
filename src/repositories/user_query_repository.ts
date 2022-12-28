@@ -59,4 +59,19 @@ export const usersQwRepository = {
       };
     }
   },
+  async findUserByRefreshToken(
+    refreshToken: string
+  ): Promise<userViewType | undefined> {
+    const user = await usersCollection.findOne({ refreshToken: refreshToken });
+    if (!user) {
+      return undefined;
+    } else {
+      return {
+        id: user._id.toString(),
+        login: user.login,
+        email: user.email,
+        createdAt: user.createdAt,
+      };
+    }
+  },
 };

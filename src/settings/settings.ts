@@ -1,3 +1,4 @@
 export const settings = {
-  jwt_secret: process.env.JWT_SECRET || "123",
+  jwt_secretAT: process.env.JWT_SECRET || "12345",
+  jwt_secretRT: process.env.JWT_SECRET || "98765",
 };

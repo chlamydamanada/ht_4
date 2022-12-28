@@ -5,8 +5,8 @@ export const emailAdapter = {
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "learningandtestingemail@gmail.com", //  email xwbpergboxauytuv
-        pass: "xwbpergboxauytuv", //  password
+        user: process.env.MY_EMAIL, //  email xwbpergboxauytuv
+        pass: process.env.PASS, //  password
       },
     });
     let code = fullUser.emailConfirmation.confirmationCode;

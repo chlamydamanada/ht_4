@@ -72,4 +72,18 @@ export const usersDbRepository = {
       { $set: { emailConfirmation: newEmailConfirmation } }
     );
   },
+  async updateRefreshToken(userId: string, refreshToken: string) {
+    const result = await usersCollection.updateOne(
+      { userId },
+      { $set: { refreshToken: refreshToken } }
+    );
+    return result.matchedCount === 1;
+  },
+  async deleteRefreshToken(userId: string) {
+    const result = await usersCollection.updateOne(
+      { userId },
+      { $unset: { refreshToken: "" } }
+    );
+    return result.matchedCount === 1;
+  },
 };

@@ -12,17 +12,17 @@ export const refreshTokenMiddleware = async (
     return;
   }
   const refreshToken = req.cookies.refreshToken;
-
-  console.log("!!!!!!!!", refreshToken);
   const user = await usersQwRepository.findUserByRefreshToken(refreshToken);
-  console.log("*****", user);
   if (!user) {
     res.status(401).send("refresh token is incorrect");
     return;
   }
-  /*if (req.cookies.expires < new Date())
-    res.status(401).send("refresh token is expired");*/
-
+  const expirationDateOfRefreshToken =
+    await authService.getExpirationDateOfRefreshToken(refreshToken);
+  if (new Date(expirationDateOfRefreshToken) < new Date()) {
+    res.status(401).send("refresh token is expired");
+    return;
+  }
   req.user = user;
   next();
 };

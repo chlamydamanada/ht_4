@@ -58,6 +58,16 @@ export const authService = {
       return null;
     }
   },
+  async getExpirationDateOfRefreshToken(token: string): Promise<any> {
+    try {
+      const result: any = jwt.verify(token, settings.jwt_secretRT);
+      return result.expirationDate;
+    } catch (error) {
+      console.log("my error:" + error);
+      return null;
+    }
+  },
+
   async deleteRefreshToken(userId: string) {
     const isDelRT = await usersDbRepository.deleteRefreshToken(userId);
     return isDelRT;

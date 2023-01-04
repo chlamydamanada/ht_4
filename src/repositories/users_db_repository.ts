@@ -6,7 +6,7 @@ import { confirmationCodeType } from "../models/confirmationCodeModel";
 import { emailConfirmationType } from "../models/emailConfirmationServiceModel";
 
 export const usersDbRepository = {
-  async createUser(user: userCreateServiceType): Promise<string> {
+  async createUser(user: userDbType): Promise<string> {
     const newUser = await usersCollection.insertOne(user);
     return newUser.insertedId.toString();
   },
@@ -33,7 +33,6 @@ export const usersDbRepository = {
         id: user._id.toString(),
         email: user.email,
         hash: user.passwordHash,
-        salt: user.passwordSalt,
         emailConfirmation: user.emailConfirmation,
       };
     } else {
@@ -63,14 +62,16 @@ export const usersDbRepository = {
     );
     return result.matchedCount === 1;
   },
-  async updateEmailConfirmation(
-    userId: string,
+  async findByEmailAndUpdateEmailConfirmation(
+    email: string,
     newEmailConfirmation: emailConfirmationType
   ): Promise<any> {
-    const result = await usersCollection.updateOne(
-      { _id: new ObjectId(userId) },
-      { $set: { emailConfirmation: newEmailConfirmation } }
+    const newUser = await usersCollection.findOneAndUpdate(
+      { emai: email },
+      { $set: { emailConfirmation: newEmailConfirmation } },
+      { returnDocument: "after" }
     );
+    return newUser;
   },
   async updateRefreshToken(userId: string, refreshToken: string) {
     const result = await usersCollection.updateOne(

@@ -1,8 +1,7 @@
 import { usersDbRepository } from "../repositories/users_db_repository";
 import { usersService } from "./users_service";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { settings } from "../settings/settings";
-import { userAuthServiceType } from "../models/userAuthServiceModel";
 import bcrypt from "bcrypt";
 import { userDbType } from "../models/userDBModel";
 import { v4 as uuidv4 } from "uuid";
@@ -10,15 +9,13 @@ import add from "date-fns/add";
 import { emailAdapter } from "../adapters/email_adapter";
 
 import { emailConfirmationType } from "../models/emailConfirmationServiceModel";
-import { CookieOptions } from "express-serve-static-core";
-import { usersCollection } from "../repositories/db";
 
 export const authService = {
   async checkCredentials(loginOrEmail: string, password: string) {
     const user = await usersDbRepository.findUserByLoginOrEmail(loginOrEmail);
     if (!user) return false;
-
-    const userHash = await usersService.generateHash(password, user.salt);
+    const salt = user.hash.slice(0, 29);
+    const userHash = await usersService.generateHash(password, salt);
     if (user.hash === userHash) {
       return user;
     } else {
@@ -37,10 +34,13 @@ export const authService = {
     const token = jwt.sign({ userId: userID }, settings.jwt_secretRT, {
       expiresIn: "20 seconds",
     });
-    await usersDbRepository.updateRefreshToken(userID, token);
+    await this.updateRefreshToken(userID, token);
     return token;
   },
-  async getUserIdByToken(token: string): Promise<any> {
+  async updateRefreshToken(userID: string, token: string) {
+    await usersDbRepository.updateRefreshToken(userID, token);
+  },
+  async getUserIdByToken(token: string): Promise<string | null> {
     try {
       const result: any = jwt.verify(token, settings.jwt_secretAT);
       return result.userId;
@@ -49,7 +49,7 @@ export const authService = {
       return null;
     }
   },
-  async getUserIdByRefreshToken(token: string): Promise<any> {
+  async getUserIdByRefreshToken(token: string): Promise<string | null> {
     try {
       const result: any = jwt.verify(token, settings.jwt_secretRT);
       return result.userId;
@@ -68,7 +68,7 @@ export const authService = {
     }
   },
 
-  async deleteRefreshToken(userId: string) {
+  async deleteRefreshToken(userId: string): Promise<boolean> {
     const isDelRT = await usersDbRepository.deleteRefreshToken(userId);
     return isDelRT;
   },
@@ -76,7 +76,7 @@ export const authService = {
     login: string,
     password: string,
     email: string
-  ): Promise<any> {
+  ): Promise<string> {
     const passwordSalt = await bcrypt.genSalt(10);
     const passwordHash = await usersService.generateHash(
       password,
@@ -87,7 +87,6 @@ export const authService = {
       login: login,
       email: email,
       passwordHash,
-      passwordSalt,
       createdAt: new Date().toISOString(),
       emailConfirmation: {
         confirmationCode: uuidv4(),
@@ -113,17 +112,14 @@ export const authService = {
     return await usersDbRepository.updateConfirmation(user._id);
   },
   async checkEmailIsConfirmed(email: string) {
-    const user = await usersDbRepository.findUserByLoginOrEmail(email);
     const newEmailConfirmation = this.createNewConfirmationCode();
-    await usersDbRepository.updateEmailConfirmation(
-      user!.id,
-      newEmailConfirmation
-    );
-    const newUser = await usersDbRepository.findUserByLoginOrEmail(email);
-
+    const newUser =
+      await usersDbRepository.findByEmailAndUpdateEmailConfirmation(
+        email,
+        newEmailConfirmation
+      );
     try {
-      const sendEmail = await emailAdapter.sendEmail(newUser);
-      return sendEmail;
+      return await emailAdapter.sendEmail(newUser);
     } catch (error) {
       // await usersDbRepository.deleteUser(id)
     }

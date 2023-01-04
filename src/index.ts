@@ -10,6 +10,7 @@ import { usersRouter } from "./routers/users_router";
 import { authRouter } from "./routers/auth_router";
 import { commentsRouter } from "./routers/comments_router";
 import { emailRouter } from "./routers/email_router";
+import { securityRouter } from "./routers/security_router";
 
 const app = express();
 const port = process.env.PORT || 3200;
@@ -23,6 +24,7 @@ app.use("/users", usersRouter);
 app.use("/comments", commentsRouter);
 app.use("/testing/all-data", allDataRouter);
 app.use("/email", emailRouter);
+app.use("/security/devices", securityRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send(`Hello user`);

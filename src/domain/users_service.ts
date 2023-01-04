@@ -17,7 +17,6 @@ export const usersService = {
       login: login,
       email: email,
       passwordHash,
-      passwordSalt,
       createdAt: new Date().toISOString(),
       emailConfirmation: {
         confirmationCode: uuidv4(),

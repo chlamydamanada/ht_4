@@ -15,25 +15,41 @@ import { emailValidation } from "../middlewares/email.middleware";
 import { inputValMiddleware } from "../middlewares/inputValue.middleware";
 import { userQueryType } from "../models/userQueryModel";
 import { usersViewType } from "../models/usersViewModel";
+import { pagination } from "../helpers/pagination";
+
+const queryFilter = (query: {
+  sortBy: string;
+  pageNumber: string;
+  pageSize: string;
+  sortDirection: string;
+}) => {
+  const pageNumber = !isNaN(Number(query.pageNumber))
+    ? Number(query.pageNumber)
+    : 1;
+  const pageSize = !isNaN(Number(query.pageSize)) ? Number(query.pageSize) : 10;
+  const sortBy = query.sortBy ? query.sortBy : "createdAt";
+  const sortDirection = query.sortDirection === "asc" ? 1 : -1;
+
+  return {
+    pageNumber,
+    pageSize,
+    sortDirection,
+    sortBy,
+  };
+};
 
 export const usersRouter = Router();
 
 usersRouter.get(
   "/",
+  pagination,
   baseAuthMiddleware,
   async (
     req: RequestWithQuery<userQueryType>,
     res: Response<usersViewType>
   ) => {
-    const {
-      sortBy,
-      pageNumber,
-      pageSize,
-      sortDirection,
-      searchLoginTerm,
-      searchEmailTerm,
-    } = req.query;
-    const sortField = sortBy ? sortBy : "createdAt";
+    const { sortBy, pageNumber, pageSize, sortDirection } = req.query;
+    //const sortField = sortBy ? sortBy : "createdAt";
     const pN = pageNumber ? +pageNumber : 1;
     const pS = pageSize ? +pageSize : 10;
     const sD: 1 | -1 = sortDirection === "asc" ? 1 : -1;
@@ -43,7 +59,7 @@ usersRouter.get(
       pS,
       req.query.searchLoginTerm,
       req.query.searchEmailTerm,
-      sortField,
+      req.query.sortBy!,
       sD
     );
     res.status(200).send(allUsers);

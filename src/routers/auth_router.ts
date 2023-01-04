@@ -1,6 +1,5 @@
 import { Request, Response, Router } from "express";
-import { RequestWithBody, RequestWithURL } from "../models/request_types";
-
+import { RequestWithBody } from "../models/request_types";
 import { authService } from "../domain/auth_service";
 import { authCreateType } from "../models/authCreateModel";
 import { loginOrEmailValidation } from "../middlewares/auth_loginOrEmail.middleware";
@@ -10,9 +9,6 @@ import { bearerAuthMiddleware } from "../middlewares/bearerAuthrization.middlewa
 import { userCreateType } from "../models/userCreateModel";
 import { emailValidation } from "../middlewares/email.middleware";
 import { loginValidation } from "../middlewares/login.middleware";
-import { usersService } from "../domain/users_service";
-import { confirmationCodeType } from "../models/confirmationCodeModel";
-import { userEmailType } from "../models/userEmailModel";
 import { codeValidation } from "../middlewares/code.middleware";
 import { emailExistValidation } from "../middlewares/emailExist.middleware";
 import { emailIsConfirmedValidation } from "../middlewares/emailIsConfirmed.middleware";
@@ -27,7 +23,10 @@ authRouter.post(
   loginOrEmailValidation,
   passwordValidation,
   inputValMiddleware,
-  async (req: RequestWithBody<authCreateType>, res: Response) => {
+  async (
+    req: RequestWithBody<authCreateType>,
+    res: Response<{ accessToken: string }>
+  ) => {
     const user = await authService.checkCredentials(
       req.body.loginOrEmail,
       req.body.password

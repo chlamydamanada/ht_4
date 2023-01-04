@@ -12,7 +12,6 @@ export type userDbType = {
   login: string;
   email: string;
   passwordHash: string;
-  passwordSalt: string;
   createdAt: string;
   emailConfirmation: emailConfirmationType;
 };

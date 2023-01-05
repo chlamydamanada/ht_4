@@ -2,6 +2,7 @@ import { blogsCollection, postsCollection } from "./db";
 import { ObjectId } from "mongodb";
 import { blogViewType } from "../models/blogViewModel";
 import { blogsViewType } from "../models/blogsViewModel";
+import { sortingQueryFields } from "../helpers/sortingFields";
 
 type searchVal = {
   name?: {};
@@ -14,12 +15,8 @@ export const blogsQwRepository = {
     sortField: string,
     sD: 1 | -1
   ): Promise<blogsViewType> {
-    let searchValue: searchVal = {};
-    if (searchNameTerm) {
-      searchValue.name = { $regex: searchNameTerm, $options: "i" };
-    }
-
-    let totalCount = await blogsCollection.count(searchValue);
+    const searchValue = sortingQueryFields.nameFilter(searchNameTerm);
+    const totalCount = await blogsCollection.count(searchValue);
     const blogs = await blogsCollection
       .find(searchValue)
       .sort({ [sortField]: sD })

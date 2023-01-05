@@ -15,6 +15,8 @@ import { securityRouter } from "./routers/security_router";
 const app = express();
 const port = process.env.PORT || 3200;
 
+app.set("trust proxy", true);
+
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use("/blogs", blogsRouter);

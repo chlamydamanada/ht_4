@@ -2,6 +2,7 @@ import { usersCollection } from "./db";
 import { userViewType } from "../models/userViewModel";
 import { ObjectId } from "mongodb";
 import { usersViewType } from "../models/usersViewModel";
+import { sortingQueryFields } from "../helpers/sortingFields";
 
 export const usersQwRepository = {
   async findAllUsers(
@@ -12,22 +13,16 @@ export const usersQwRepository = {
     sortBy: string,
     sortDirection: 1 | -1
   ): Promise<usersViewType> {
-    const loginFilter: any = {};
-    const emailFilter: any = {};
-    if (searchLoginTerm) {
-      loginFilter.login = { $regex: searchLoginTerm, $options: "i" };
-    }
-    if (searchEmailTerm) {
-      emailFilter.email = { $regex: searchEmailTerm, $options: "i" };
-    }
-    const totalCount = await usersCollection.count({
-      $or: [loginFilter, emailFilter],
-    });
+    const loginAndEmailFilter = sortingQueryFields.loginAndEmailFilter(
+      searchLoginTerm,
+      searchEmailTerm
+    );
+
+    const totalCount = await usersCollection.count(loginAndEmailFilter);
+    console.log(loginAndEmailFilter);
 
     const allUsers = await usersCollection
-      .find({
-        $or: [loginFilter, emailFilter],
-      })
+      .find(loginAndEmailFilter)
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .sort({ [sortBy]: sortDirection })

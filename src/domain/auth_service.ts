@@ -32,7 +32,7 @@ export const authService = {
   },
   async createRefreshToken(userID: string) {
     const token = jwt.sign({ userId: userID }, settings.jwt_secretRT, {
-      expiresIn: "20 seconds",
+      expiresIn: "60 seconds",
     });
     await this.updateRefreshToken(userID, token);
     return token;

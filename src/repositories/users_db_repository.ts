@@ -73,18 +73,4 @@ export const usersDbRepository = {
     );
     return newUser;
   },
-  async updateRefreshToken(userId: string, refreshToken: string) {
-    const result = await usersCollection.updateOne(
-      { _id: new ObjectId(userId) },
-      { $set: { refreshToken: refreshToken } }
-    );
-    return result.matchedCount === 1;
-  },
-  async deleteRefreshToken(userId: string) {
-    const result = await usersCollection.updateOne(
-      { _id: new ObjectId(userId) },
-      { $unset: { refreshToken: "" } }
-    );
-    return result.matchedCount === 1;
-  },
 };

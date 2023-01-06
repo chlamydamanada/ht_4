@@ -9,6 +9,8 @@ import add from "date-fns/add";
 import { emailAdapter } from "../adapters/email_adapter";
 
 import { emailConfirmationType } from "../models/emailConfirmationServiceModel";
+import { jwtService } from "../application/jwt_service";
+import { authRepository } from "../repositories/auth_repository";
 
 export const authService = {
   async checkCredentials(loginOrEmail: string, password: string) {
@@ -30,46 +32,53 @@ export const authService = {
       accessToken: token,
     };
   },
-  async createRefreshToken(userID: string) {
-    const token = jwt.sign({ userId: userID }, settings.jwt_secretRT, {
-      expiresIn: "60 seconds",
+  async createRefreshToken(
+    userId: string,
+    ip: string,
+    title: string | undefined
+  ) {
+    const deviceId = uuidv4();
+    const token = await jwtService.createRefreshToken(userId, deviceId);
+    const tokenInfo = await jwtService.decodeRefreshToken(token);
+    await authRepository.createRefreshTokenMeta({
+      deviceId,
+      ip: ip,
+      title: title,
+      userId: userId,
+      lastActiveDate: tokenInfo.iat!,
+      expirationDate: tokenInfo.exp!,
     });
-    await this.updateRefreshToken(userID, token);
     return token;
   },
-  async updateRefreshToken(userID: string, token: string) {
-    await usersDbRepository.updateRefreshToken(userID, token);
+  async updateRefreshToken(userId: string, ip: string, oldToken: string) {
+    const oldTokenInfo = await jwtService.decodeRefreshToken(oldToken);
+    const token = await jwtService.createRefreshToken(
+      userId,
+      oldTokenInfo.deviceId
+    );
+    const tokenInfo = await jwtService.decodeRefreshToken(token);
+    await authRepository.updateRefreshTokenMeta({
+      deviceId: oldTokenInfo.deviceId,
+      ip: ip,
+      lastActiveDate: tokenInfo.iat!,
+      expirationDate: tokenInfo.exp!,
+    });
+    return token;
   },
-  async getUserIdByToken(token: string): Promise<string | null> {
+  async getUserIdByAccessToken(token: string): Promise<string | null> {
     try {
       const result: any = jwt.verify(token, settings.jwt_secretAT);
       return result.userId;
     } catch (error) {
-      console.log("my error:" + error);
+      console.log("Access Token error");
       return null;
     }
   },
-  async getUserIdByRefreshToken(token: string): Promise<string | null> {
-    try {
-      const result: any = jwt.verify(token, settings.jwt_secretRT);
-      return result.userId;
-    } catch (error) {
-      console.log("my error:" + error);
-      return null;
-    }
-  },
-  async getExpirationDateOfRefreshToken(token: string): Promise<any> {
-    try {
-      const result: any = jwt.verify(token, settings.jwt_secretRT);
-      return result.expirationDate;
-    } catch (error) {
-      console.log("my error:" + error);
-      return null;
-    }
-  },
-
-  async deleteRefreshToken(userId: string): Promise<boolean> {
-    const isDelRT = await usersDbRepository.deleteRefreshToken(userId);
+  async deleteRefreshTokenMetaByToken(token: string): Promise<boolean> {
+    const tokenInfo = await jwtService.decodeRefreshToken(token);
+    const isDelRT = await authRepository.deleteRefreshTokenMeta(
+      tokenInfo.deviceId
+    );
     return isDelRT;
   },
   async createUser(

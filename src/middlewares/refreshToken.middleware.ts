@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { authService } from "../domain/auth_service";
-import { usersQwRepository } from "../repositories/user_query_repository";
+import { jwtService } from "../application/jwt_service";
+import { usersDbRepository } from "../repositories/users_db_repository";
+import { authRepository } from "../repositories/auth_repository";
 
 export const refreshTokenMiddleware = async (
   req: Request,
@@ -11,18 +12,22 @@ export const refreshTokenMiddleware = async (
     res.status(401).send("refresh token not found");
     return;
   }
-  const refreshToken = req.cookies.refreshToken;
-  const user = await usersQwRepository.findUserByRefreshToken(refreshToken);
-  if (!user) {
-    res.status(401).send("refresh token is incorrect");
+  const userId = await jwtService.getUserIdByRefreshToken(
+    req.cookies.refreshToken
+  );
+  if (!userId) {
+    res.status(401).send("refresh token is incorrect or expired");
     return;
   }
-  const expirationDateOfRefreshToken =
-    await authService.getExpirationDateOfRefreshToken(refreshToken);
-  if (new Date(expirationDateOfRefreshToken) < new Date()) {
+  const tokenInfo = await jwtService.decodeRefreshToken(
+    req.cookies.refreshToken
+  );
+  const token = await authRepository.findRefreshTokenMeta(tokenInfo.deviceId);
+  if (tokenInfo.iat! !== token!.lastActiveDate) {
     res.status(401).send("refresh token is expired");
     return;
   }
+  const user = await usersDbRepository.findFullUserById(userId);
   req.user = user;
   next();
 };

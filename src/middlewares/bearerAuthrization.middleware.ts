@@ -12,7 +12,7 @@ export const bearerAuthMiddleware = async (
     return;
   }
   const token = req.headers.authorization.split(" ")[1];
-  const userId = await authService.getUserIdByToken(token);
+  const userId = await authService.getUserIdByAccessToken(token);
   if (userId) {
     req.user = await usersQwRepository.findUserById(userId);
     next();

@@ -15,6 +15,7 @@ import { emailIsConfirmedValidation } from "../middlewares/emailIsConfirmed.midd
 import { loginExistValidation } from "../middlewares/loginExist.middleware";
 import { meViewType } from "../models/meViewModel";
 import { refreshTokenMiddleware } from "../middlewares/refreshToken.middleware";
+import { jwtService } from "../application/jwt_service";
 
 export const authRouter = Router();
 
@@ -28,11 +29,13 @@ authRouter.post(
       req.body.loginOrEmail,
       req.body.password
     );
-    console.log("my ip", req.ip);
-    console.log("my name", req.headers["user-agent"]);
     if (user) {
       const accessToken = await authService.createAccessToken(user.id);
-      const refreshToken = await authService.createRefreshToken(user.id);
+      const refreshToken = await authService.createRefreshToken(
+        user.id,
+        req.ip!,
+        req.headers["user-agent"]
+      );
       console.log(refreshToken);
       res
         .cookie("refreshToken", refreshToken, {
@@ -40,7 +43,7 @@ authRouter.post(
           secure: true,
         })
         .status(200)
-        .send(req.ip);
+        .send(accessToken);
     } else {
       res.sendStatus(401);
     }
@@ -52,10 +55,14 @@ authRouter.post(
   async (req: Request, res: Response) => {
     if (req.user) {
       const accessToken = await authService.createAccessToken(req.user.id);
-      const refreshToken = await authService.createRefreshToken(req.user.id);
+      const refreshToken = await authService.updateRefreshToken(
+        req.user.id,
+        req.ip!,
+        req.cookies.refreshToken
+      );
       console.log(refreshToken);
       res
-        .cookie("refreshToken", refreshToken, {
+        .cookie("refreshToken", accessToken, {
           httpOnly: true,
           secure: true,
         })
@@ -68,12 +75,8 @@ authRouter.post(
   "/logout",
   refreshTokenMiddleware,
   async (req: Request, res: Response) => {
-    const isDelRT = await authService.deleteRefreshToken(req.user!.id);
-    if (isDelRT) {
-      res.clearCookie("refreshToken").sendStatus(204);
-    } else {
-      res.sendStatus(401);
-    }
+    await authService.deleteRefreshTokenMetaByToken(req.cookies.refreshToken);
+    res.clearCookie("refreshToken").sendStatus(204);
   }
 );
 authRouter.get(

@@ -22,3 +22,4 @@ export const blogsCollection = myDb.collection<blogDbModel>("blogs");
 export const postsCollection = myDb.collection<postDbType>("posts");
 export const usersCollection = myDb.collection("users");
 export const commentsCollection = myDb.collection("comments");
+export const refreshTokenMetaCollection = myDb.collection("refreshTokenMeta");

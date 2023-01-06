@@ -23,14 +23,13 @@ authRouter.post(
   loginOrEmailValidation,
   passwordValidation,
   inputValMiddleware,
-  async (
-    req: RequestWithBody<authCreateType>,
-    res: Response<{ accessToken: string }>
-  ) => {
+  async (req: Request, res: Response<{ accessToken: string }>) => {
     const user = await authService.checkCredentials(
       req.body.loginOrEmail,
       req.body.password
     );
+    console.log("my ip", req.ip);
+    console.log("my name", req.headers["user-agent"]);
     if (user) {
       const accessToken = await authService.createAccessToken(user.id);
       const refreshToken = await authService.createRefreshToken(user.id);
@@ -41,7 +40,7 @@ authRouter.post(
           secure: true,
         })
         .status(200)
-        .send(accessToken);
+        .send(req.ip);
     } else {
       res.sendStatus(401);
     }

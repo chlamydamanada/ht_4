@@ -1,10 +1,10 @@
 import { refreshTokenMetaCollection } from "./db";
 
 export const authRepository = {
-  async createRefreshTokenMeta(device: any) {
+  async createRefreshTokenMeta(device: any): Promise<void> {
     await refreshTokenMetaCollection.insertOne(device);
   },
-  async updateRefreshTokenMeta(device: any) {
+  async updateRefreshTokenMeta(device: any): Promise<boolean> {
     const result = await refreshTokenMetaCollection.updateOne(
       { deviceId: device.deviceId },
       {
@@ -24,12 +24,21 @@ export const authRepository = {
     });
     return refreshTokenMeta;
   },
-  async deleteRefreshTokenMeta(deviceId: string) {
+  async deleteRefreshTokenMeta(deviceId: string): Promise<boolean> {
     const isDel = await refreshTokenMetaCollection.deleteOne({
       deviceId: deviceId,
     });
     return isDel.deletedCount === 1;
   },
+  async deleteALLRefreshTokenMetaByIdExceptMy(
+    userId: string, deviceId: string
+  ): Promise<boolean> {
+    const isDel = await refreshTokenMetaCollection.deleteMany({ userId
+      deviceId: [{ $nin: userId }],
+    });
+    return isDel.deletedCount === 1;
+  },
+
   async findAllDevices(userId: string) {
     const allDevices = await refreshTokenMetaCollection
       .find({ userId: userId })

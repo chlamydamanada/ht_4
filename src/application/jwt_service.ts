@@ -7,7 +7,7 @@ export const jwtService = {
       { userId: userId, deviceId: deviceId },
       settings.jwt_secretRT,
       {
-        expiresIn: "90 seconds",
+        expiresIn: "200 seconds",
       }
     );
     return token;

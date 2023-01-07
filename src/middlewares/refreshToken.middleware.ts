@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { jwtService } from "../application/jwt_service";
-import { usersDbRepository } from "../repositories/users_db_repository";
 import { authRepository } from "../repositories/auth_repository";
+import { usersQwRepository } from "../repositories/user_query_repository";
 
 export const refreshTokenMiddleware = async (
   req: Request,
@@ -27,7 +27,8 @@ export const refreshTokenMiddleware = async (
     res.status(401).send("refresh token is expired");
     return;
   }
-  const user = await usersDbRepository.findFullUserById(userId);
+  const user = await usersQwRepository.findUserById(userId);
   req.user = user;
+  req.deviceId = tokenInfo.deviceId;
   next();
 };

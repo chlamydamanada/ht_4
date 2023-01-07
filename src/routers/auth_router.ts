@@ -1,7 +1,6 @@
 import { Request, Response, Router } from "express";
 import { RequestWithBody } from "../models/request_types";
 import { authService } from "../domain/auth_service";
-import { authCreateType } from "../models/authCreateModel";
 import { loginOrEmailValidation } from "../middlewares/auth_loginOrEmail.middleware";
 import { passwordValidation } from "../middlewares/password.middleware";
 import { inputValMiddleware } from "../middlewares/inputValue.middleware";
@@ -15,7 +14,6 @@ import { emailIsConfirmedValidation } from "../middlewares/emailIsConfirmed.midd
 import { loginExistValidation } from "../middlewares/loginExist.middleware";
 import { meViewType } from "../models/meViewModel";
 import { refreshTokenMiddleware } from "../middlewares/refreshToken.middleware";
-import { jwtService } from "../application/jwt_service";
 
 export const authRouter = Router();
 

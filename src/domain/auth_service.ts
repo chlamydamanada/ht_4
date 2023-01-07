@@ -81,6 +81,16 @@ export const authService = {
     );
     return isDelRT;
   },
+  async deleteAllRefreshTokenMetaByIdExceptMy(
+    userId: string,
+    deviceId: string
+  ): Promise<boolean> {
+    const isDelRT = await authRepository.deleteALLRefreshTokenMetaByIdExceptMy(
+      userId,
+      deviceId
+    );
+    return isDelRT;
+  },
   async createUser(
     login: string,
     password: string,

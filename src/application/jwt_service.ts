@@ -15,6 +15,7 @@ export const jwtService = {
   async decodeRefreshToken(token: string): Promise<any> {
     try {
       const result: any = jwt.decode(token);
+      console.log("token result:", result);
       return result;
     } catch (e) {
       console.log("Can't decode token", e);

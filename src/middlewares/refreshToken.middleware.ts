@@ -27,8 +27,8 @@ export const refreshTokenMiddleware = async (
     res.status(401).send("refresh token not found 2");
     return;
   }
-  if (tokenInfo.iat! !== token!.lastActiveDate) {
-    res.status(401).send("refresh token is expired");
+  if (tokenInfo.iat !== token.lastActiveDate) {
+    res.status(401).send("refresh token is already invalid");
     return;
   }
   const user = await usersQwRepository.findUserById(tokenInfo.userId);

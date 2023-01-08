@@ -67,7 +67,7 @@ authRouter.post(
       );
       console.log(refreshToken);
       res
-        .cookie("refreshToken", accessToken, {
+        .cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: true,
         })

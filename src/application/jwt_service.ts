@@ -12,9 +12,14 @@ export const jwtService = {
     );
     return token;
   },
-  async decodeRefreshToken(token: string): Promise<JwtPayload> {
-    const result: any = jwt.decode(token);
-    return result;
+  async decodeRefreshToken(token: string): Promise<any> {
+    try {
+      const result: any = jwt.decode(token);
+      return result;
+    } catch (e) {
+      console.log("Can't decode token", e);
+      return null;
+    }
   },
   async getUserIdByRefreshToken(token: string): Promise<string | null> {
     try {

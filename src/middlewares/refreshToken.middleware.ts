@@ -15,8 +15,6 @@ export const refreshTokenMiddleware = async (
   const tokenInfo = await jwtService.decodeRefreshToken(
     req.cookies.refreshToken
   );
-  console.log("++++token", req.cookies.refreshToken);
-  console.log("***tokenInfo", tokenInfo);
   if (!tokenInfo) {
     res.status(401).send("refresh token is incorrect");
     return;

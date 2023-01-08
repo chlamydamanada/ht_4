@@ -29,6 +29,7 @@ export const authRepository = {
         title: refreshTokenMeta.title,
         lastActiveDate: refreshTokenMeta.lastActiveDate,
         deviceId: refreshTokenMeta.deviceId,
+        userId: refreshTokenMeta.userId,
       };
     } else {
       return false;

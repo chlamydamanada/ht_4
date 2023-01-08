@@ -31,10 +31,12 @@ export const authRepository = {
     return isDel.deletedCount === 1;
   },
   async deleteALLRefreshTokenMetaByIdExceptMy(
-    userId: string, deviceId: string
+    userId: string,
+    deviceId: string
   ): Promise<boolean> {
-    const isDel = await refreshTokenMetaCollection.deleteMany({ userId
-      deviceId: [{ $nin: userId }],
+    const isDel = await refreshTokenMetaCollection.deleteMany({
+      userId: userId,
+      deviceId: { $ne: deviceId },
     });
     return isDel.deletedCount === 1;
   },
@@ -43,7 +45,6 @@ export const authRepository = {
     const allDevices = await refreshTokenMetaCollection
       .find({ userId: userId })
       .toArray();
-    console.log(allDevices);
     return allDevices.map((d) => ({
       ip: d.ip,
       title: d.title,

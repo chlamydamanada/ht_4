@@ -11,9 +11,7 @@ securityRouter.get(
   refreshTokenMiddleware,
   async (req: Request, res: Response) => {
     if (req.user) {
-      const allDevices = await authRepository.findAllDevices(
-        req.user.id.toString()
-      );
+      const allDevices = await authRepository.findAllDevices(req.user.id);
       res.status(200).send(allDevices);
     }
   }
@@ -22,10 +20,12 @@ securityRouter.delete(
   "/",
   refreshTokenMiddleware,
   async (req: Request, res: Response) => {
+    console.log(req.user!.id);
+    console.log(req.deviceId!);
     if (req.user) {
       await authService.deleteAllRefreshTokenMetaByIdExceptMy(
         req.user.id,
-        req.deviceId
+        req.deviceId!
       );
       res.sendStatus(204);
     }

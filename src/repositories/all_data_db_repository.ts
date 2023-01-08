@@ -2,6 +2,7 @@ import {
   blogsCollection,
   commentsCollection,
   postsCollection,
+  refreshTokenMetaCollection,
   usersCollection,
 } from "./db";
 
@@ -12,6 +13,7 @@ export const allDataRepository = {
       postsCollection.deleteMany({}),
       usersCollection.deleteMany({}),
       commentsCollection.deleteMany({}),
+      refreshTokenMetaCollection.deleteMany({}),
     ]);
   },
 };

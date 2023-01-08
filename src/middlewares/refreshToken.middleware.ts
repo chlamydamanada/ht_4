@@ -21,6 +21,10 @@ export const refreshTokenMiddleware = async (
   }
 
   const token = await authRepository.findRefreshTokenMeta(tokenInfo.deviceId);
+  if (!token) {
+    res.status(401).send("refresh token not found 2");
+    return;
+  }
   if (tokenInfo.iat! !== token!.lastActiveDate) {
     res.status(401).send("refresh token is expired");
     return;

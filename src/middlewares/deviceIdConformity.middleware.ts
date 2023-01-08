@@ -6,15 +6,13 @@ export const deviceIdConformityMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  const device = await authRepository.findIsDeviceByDeviceId(
-    req.params.deviceId
-  );
+  const device = await authRepository.findRefreshTokenMeta(req.params.deviceId);
   if (!device) {
     res.status(404).send("The device not found");
     return;
   }
   if (req.params.deviceId !== req.deviceId) {
-    res.status(404).send("You try to delete the device of other user");
+    res.status(403).send("You try to delete the device of other user");
     return;
   }
   next();

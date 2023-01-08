@@ -22,7 +22,17 @@ export const authRepository = {
     const refreshTokenMeta = await refreshTokenMetaCollection.findOne({
       deviceId: deviceId,
     });
-    return refreshTokenMeta;
+
+    if (refreshTokenMeta) {
+      return {
+        ip: refreshTokenMeta.ip,
+        title: refreshTokenMeta.title,
+        lastActiveDate: refreshTokenMeta.lastActiveDate,
+        deviceId: refreshTokenMeta.deviceId,
+      };
+    } else {
+      return false;
+    }
   },
   async deleteRefreshTokenMeta(deviceId: string): Promise<boolean> {
     const isDel = await refreshTokenMetaCollection.deleteOne({
@@ -56,8 +66,7 @@ export const authRepository = {
     const device = await refreshTokenMetaCollection.find({
       deviceId: deviceId,
     });
-    if (device) {
-      return true;
-    }
+    console.log(device);
+    return device;
   },
 };

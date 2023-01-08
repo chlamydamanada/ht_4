@@ -52,4 +52,10 @@ export const authRepository = {
       deviceId: d.deviceId,
     }));
   },
+  async findIsDeviceByDeviceId(deviceId: string) {
+    const device = await refreshTokenMetaCollection.find({
+      deviceId: deviceId,
+    });
+    return device;
+  },
 };

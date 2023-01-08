@@ -17,10 +17,10 @@ export const refreshTokenMiddleware = async (
   );
   console.log("++++token", req.cookies.refreshToken);
   console.log("***tokenInfo", tokenInfo);
-  if (!tokenInfo) {
+  /*if (!tokenInfo) {
     res.status(401).send("refresh token is incorrect");
     return;
-  }
+  }*/
 
   const token = await authRepository.findRefreshTokenMeta(tokenInfo.deviceId);
   if (!token) {

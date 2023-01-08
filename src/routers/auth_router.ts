@@ -14,13 +14,18 @@ import { emailIsConfirmedValidation } from "../middlewares/emailIsConfirmed.midd
 import { loginExistValidation } from "../middlewares/loginExist.middleware";
 import { meViewType } from "../models/meViewModel";
 import { refreshTokenMiddleware } from "../middlewares/refreshToken.middleware";
-import { limiterRegistration } from "../middlewares/limitRegistration.middleware";
+import {
+  limiterLogin,
+  limiterRegistration,
+  limiterRegistrationConfirmation,
+  limiterRegistrationEmailResending,
+} from "../middlewares/limitRegistration.middleware";
 
 export const authRouter = Router();
 
 authRouter.post(
   "/login",
-  limiterRegistration,
+  limiterLogin,
   loginOrEmailValidation,
   passwordValidation,
   inputValMiddleware,
@@ -114,7 +119,7 @@ authRouter.post(
 );
 authRouter.post(
   "/registration-confirmation",
-  limiterRegistration,
+  limiterRegistrationConfirmation,
   codeValidation,
   inputValMiddleware,
   async (req: RequestWithBody<{ code: string }>, res: Response) => {
@@ -129,7 +134,7 @@ authRouter.post(
 
 authRouter.post(
   "/registration-email-resending",
-  limiterRegistration,
+  limiterRegistrationEmailResending,
   emailValidation,
   emailIsConfirmedValidation,
   inputValMiddleware,

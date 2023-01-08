@@ -14,7 +14,7 @@ export const deviceIdConformityMiddleware = async (
     return;
   }
   if (req.params.deviceId !== req.deviceId) {
-    res.status(403).send("You try to delete the device of other user");
+    res.status(404).send("You try to delete the device of other user");
     return;
   }
   next();

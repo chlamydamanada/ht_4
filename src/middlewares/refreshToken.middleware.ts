@@ -12,22 +12,20 @@ export const refreshTokenMiddleware = async (
     res.status(401).send("refresh token not found");
     return;
   }
-  const userId = await jwtService.getUserIdByRefreshToken(
-    req.cookies.refreshToken
-  );
-  if (!userId) {
-    res.status(401).send("refresh token is incorrect or expired");
-    return;
-  }
   const tokenInfo = await jwtService.decodeRefreshToken(
     req.cookies.refreshToken
   );
+  if (!tokenInfo.userId) {
+    res.status(401).send("refresh token is incorrect");
+    return;
+  }
+
   const token = await authRepository.findRefreshTokenMeta(tokenInfo.deviceId);
   if (tokenInfo.iat! !== token!.lastActiveDate) {
     res.status(401).send("refresh token is expired");
     return;
   }
-  const user = await usersQwRepository.findUserById(userId);
+  const user = await usersQwRepository.findUserById(tokenInfo.userId);
   req.user = user;
   req.deviceId = tokenInfo.deviceId;
   next();

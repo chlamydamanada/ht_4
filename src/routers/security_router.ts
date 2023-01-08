@@ -38,7 +38,7 @@ securityRouter.delete(
   async (req: Request, res: Response) => {
     console.log("USER:", req.user);
     const isDel = await authService.deleteRefreshTokenMetaByToken(
-      req.cookies.refreshToken
+      req.deviceId!
     );
     if (isDel) {
       res.sendStatus(204);

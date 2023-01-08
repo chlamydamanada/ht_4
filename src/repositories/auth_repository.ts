@@ -56,6 +56,8 @@ export const authRepository = {
     const device = await refreshTokenMetaCollection.find({
       deviceId: deviceId,
     });
-    return device;
+    if (device) {
+      return true;
+    }
   },
 };

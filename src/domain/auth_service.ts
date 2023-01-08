@@ -50,15 +50,11 @@ export const authService = {
     });
     return token;
   },
-  async updateRefreshToken(userId: string, ip: string, oldToken: string) {
-    const oldTokenInfo = await jwtService.decodeRefreshToken(oldToken);
-    const token = await jwtService.createRefreshToken(
-      userId,
-      oldTokenInfo.deviceId
-    );
+  async updateRefreshToken(userId: string, ip: string, deviceId: string) {
+    const token = await jwtService.createRefreshToken(userId, deviceId);
     const tokenInfo = await jwtService.decodeRefreshToken(token);
     await authRepository.updateRefreshTokenMeta({
-      deviceId: oldTokenInfo.deviceId,
+      deviceId: deviceId,
       ip: ip,
       lastActiveDate: tokenInfo.iat!,
       expirationDate: tokenInfo.exp!,
@@ -74,11 +70,8 @@ export const authService = {
       return null;
     }
   },
-  async deleteRefreshTokenMetaByToken(token: string): Promise<boolean> {
-    const tokenInfo = await jwtService.decodeRefreshToken(token);
-    const isDelRT = await authRepository.deleteRefreshTokenMeta(
-      tokenInfo.deviceId
-    );
+  async deleteRefreshTokenMetaByToken(deviceId: string): Promise<boolean> {
+    const isDelRT = await authRepository.deleteRefreshTokenMeta(deviceId);
     return isDelRT;
   },
   async deleteAllRefreshTokenMetaByIdExceptMy(

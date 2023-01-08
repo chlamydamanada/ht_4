@@ -56,7 +56,7 @@ authRouter.post(
       const refreshToken = await authService.updateRefreshToken(
         req.user.id,
         req.ip!,
-        req.cookies.refreshToken
+        req.deviceId!
       );
       console.log(refreshToken);
       res
@@ -73,7 +73,7 @@ authRouter.post(
   "/logout",
   refreshTokenMiddleware,
   async (req: Request, res: Response) => {
-    await authService.deleteRefreshTokenMetaByToken(req.cookies.refreshToken);
+    await authService.deleteRefreshTokenMetaByToken(req.deviceId!);
     res.clearCookie("refreshToken").sendStatus(204);
   }
 );

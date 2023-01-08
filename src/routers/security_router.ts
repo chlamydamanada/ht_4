@@ -3,13 +3,12 @@ import { refreshTokenMiddleware } from "../middlewares/refreshToken.middleware";
 import { authRepository } from "../repositories/auth_repository";
 import { authService } from "../domain/auth_service";
 import { deviceIdConformityMiddleware } from "../middlewares/deviceIdConformity.middleware";
-import { deviceTokensMiddleware } from "../middlewares/deviceTokens.middleware";
 
 export const securityRouter = Router();
 
 securityRouter.get(
   "/",
-  deviceTokensMiddleware,
+  refreshTokenMiddleware,
   async (req: Request, res: Response) => {
     if (req.user) {
       const allDevices = await authRepository.findAllDevices(req.user.id);
@@ -19,7 +18,7 @@ securityRouter.get(
 );
 securityRouter.delete(
   "/",
-  deviceTokensMiddleware,
+  refreshTokenMiddleware,
   async (req: Request, res: Response) => {
     console.log(req.user!.id);
     console.log(req.deviceId!);
@@ -34,7 +33,7 @@ securityRouter.delete(
 );
 securityRouter.delete(
   "/:deviceId",
-  deviceTokensMiddleware,
+  refreshTokenMiddleware,
   deviceIdConformityMiddleware,
   async (req: Request, res: Response) => {
     console.log("USER:", req.user);

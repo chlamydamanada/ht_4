@@ -1,7 +1,7 @@
 import rateLimit from "express-rate-limit";
 
 export const limiterRegistration = rateLimit({
-  windowMs: 9 * 1000, // 10 sec in milliseconds
+  windowMs: 100, // 10 sec in milliseconds
   max: 5, //max number of allowed requests
   message: "Too many requests, please try again later",
   standardHeaders: true,
